@@ -1,0 +1,77 @@
+{
+  "status_code": 200,
+  "data": {
+    "data": [
+      {
+        "id": "vTp4mdQysp5VZLkDNEMaNg==",
+        "name": "Shalini Sah",
+        "imId": "1h9i33e9bkmww",
+        "gender": "UNKNOWN",
+        "image": "https://images-noneu.truecallerstatic.com/myview/1/5c3cb39d190                                                                                                                                                             22b7bc8bc69ee79ea8a4b/1",
+        "score": 0.9,
+        "access": "PUBLIC",
+        "enhanced": true,
+        "phones": [
+          {
+            "e164Format": "+918409201476",
+            "numberType": "MOBILE",
+            "nationalFormat": "084092 01476",
+            "dialingCode": 91,
+            "countryCode": "IN",
+            "carrier": "Airtel",
+            "type": "openPhone"
+          }
+        ],
+        "addresses": [
+          {
+            "address": "IN",
+            "city": "Bihar",
+            "countryCode": "IN",
+            "timeZone": "+05:30",
+            "type": "address"
+          }
+        ],
+        "internetAddresses": [
+          {
+            "id": "salini.vandana@gmail.com",
+            "service": "email",
+            "caption": "Shalini Sah",
+            "type": "internetAddress"
+          }
+        ],
+        "badges": [
+          "user"
+        ],
+        "tags": [],
+        "cacheTtl": 1296000000,
+        "sources": [],
+        "searchWarnings": [],
+        "surveys": [
+          {
+            "id": "3b5c458f-ca99-411b-b10d-eedbed25b6a1",
+            "frequency": 86400,
+            "passthroughData": "eyAiMiI6ICJTaGFsaW5pIFNhaCIsICI4IjogIjAiLCAiNCI6                                                                                                                                                             ICJwZiIsICIzIjogIjMiIH0=",
+            "perNumberCooldown": 31536000,
+            "dynamicContentAccessKey": ""
+          },
+          {
+            "id": "151bda50-4e80-434c-90b7-83b67bf7b1fd",
+            "frequency": 86400,
+            "passthroughData": "eyAiMiI6ICJTaGFsaW5pIFNhaCIsICI4IjogIjAiLCAiNCI6                                                                                                                                                             ICJwZiIsICIzIjogIjMiIH0=",
+            "perNumberCooldown": 31536000,
+            "dynamicContentAccessKey": ""
+          }
+        ],
+        "commentsStats": {
+          "showComments": false
+        },
+        "manualCallerIdPrompt": false,
+        "ns": 0
+      }
+    ],
+    "provider": "ss-nu",
+    "stats": {
+      "sourceStats": []
+    }
+  }
+}
