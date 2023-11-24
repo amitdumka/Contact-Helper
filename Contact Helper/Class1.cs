@@ -47,7 +47,7 @@ namespace Contact_Helper
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
             };
             _client = new HttpClient(handler2);
-            _client.DefaultRequestHeaders.Add("Accept", "application/json");
+            _client.DefaultRequestHeaders.Add("accept", "application/json");
             _client.DefaultRequestHeaders.Add("accept-encoding", "gzip");
             _client.DefaultRequestHeaders.Add("user-agent", "Truecaller/11.75.5 (Android;10)");
             _client.DefaultRequestHeaders.Add("clientsecret", "lvc22mp3l1sfv6ujg83rd17btt");
@@ -86,37 +86,40 @@ namespace Contact_Helper
             var dCode = "+91";
             Uri uri = new Uri(OTPReguest_url);
 
-            LoginData data = new LoginData
-            {
-                PhoneNumber = phoneNumber,
-                countryCode = cCode,
-                DialingCode = dCode,
-                Region = "region-2",
-                SequenceNo = 2,
-                InstallationDetails = new InstallationDetails
-                {
-                    Language = "en",
-                    App = new AppData { BuildVersion = "5", MajorVersion = "11", MinorVersion = "7", Store = "GOOGLE_STORE" },
-                    Device = new Device
-                    {
-                        Language = "en",
-                        DeviceId = RandomString(16),
-                        Manufacturer = "OnePlus",
-                        MobileServices = new string[] { "GSM" },
-                        Model = "OnePlus 8T",
-                        OsName = "Android",
-                        OsVersion = "10"
-                    }
-                }
-            };
+            //LoginData data = new LoginData
+            //{
+            //    PhoneNumber = phoneNumber,
+            //    countryCode = cCode,
+            //    DialingCode = dCode,
+            //    Region = "region-2",
+            //    SequenceNo = 2,
+            //    InstallationDetails = new InstallationDetails
+            //    {
+            //        Language = "en",
+            //        App = new AppData { BuildVersion = "5", MajorVersion = "11", MinorVersion = "7", Store = "GOOGLE_STORE" },
+            //        Device = new Device
+            //        {
+            //            Language = "en",
+            //            DeviceId = RandomString(16),
+            //            Manufacturer = "OnePlus",
+            //            MobileServices = new string[] { "GSM" },
+            //            Model = "OnePlus 8T",
+            //            OsName = "Android",
+            //            OsVersion = "10"
+            //        }
+            //    }
+            //};
 
             try
             {
 
-              var data2 = "{\"countryCode\": IN,\"dialingCode\": +91, \"installationDetails\": {\"app\": {\"buildVersion\": 5,\"majorVersion\": 11,\"minorVersion\": 7,\"store\": \"GOOGLE_PLAY\",},\"device\": {\"deviceId\": await generate_random_string(16),\"language\": \"en\", \"manufacturer\": device[\"manufacturer\"],\"model\": device[\"model\"], \"osName\": \"Android\",\"osVersion\": \"10\",\"mobileServices\": [\"GMS\"],},\"language\": \"en\",},\"phoneNumber\": 7779997556,\"region\": \"region-2\",\"sequenceNo\": 2,}";
+                //var data2 = "{\"countryCode\": IN,\"dialingCode\": +91, \"installationDetails\": {\"app\": {\"buildVersion\": 5,\"majorVersion\": 11,\"minorVersion\": 7,\"store\": \"GOOGLE_PLAY\",},\"device\": {\"deviceId\": await generate_random_string(16),\"language\": \"en\", \"manufacturer\": device[\"manufacturer\"],\"model\": device[\"model\"], \"osName\": \"Android\",\"osVersion\": \"10\",\"mobileServices\": [\"GMS\"],},\"language\": \"en\",},\"phoneNumber\": 7779997556,\"region\": \"region-2\",\"sequenceNo\": 2,}";
+                using var stream = await FileSystem.OpenAppPackageFileAsync("data.json");
+                using var reader = new StreamReader(stream);
 
-            // string json = JsonSerializer.Serialize<LoginData>(data, _serializerOptions);
-             StringContent content = new StringContent(data2, Encoding.UTF8, "application/json");
+                var data2 = reader.ReadToEnd();
+                // string json = JsonSerializer.Serialize<LoginData>(data, _serializerOptions);
+                StringContent content = new StringContent(data2, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = null;
 

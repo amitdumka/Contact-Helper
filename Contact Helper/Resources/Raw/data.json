@@ -1,0 +1,27 @@
+{
+  "countryCode": "IN",
+  "dialingCode": "+91",
+  "installationDetails": {
+    "app": {
+      "buildVersion": 5,
+      "majorVersion": 11,
+      "minorVersion": 7,
+      "store": "GOOGLE_PLAY"
+    },
+    "device": {
+      "deviceId": "hjduikmn23hnjkid",
+      "language": "en",
+      "manufacturer": "Xiaomi",
+
+      "model": "Redmi 9A",
+      ,
+      "osName": "Android",
+      "osVersion": "10",
+      "mobileServices": [ "GMS" ]
+    },
+    "language": "en"
+  },
+  "phoneNumber": "7779997556",
+  "region": "region-2",
+  "sequenceNo": 2
+}
