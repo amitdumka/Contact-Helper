@@ -5,10 +5,15 @@
              x:Class="Contact_Helper.App">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary Source="Resources/Styles/DefaultTheme.xaml" />
+        </ResourceDictionary>
+    </Application.Resources>
+    <!--<Application.Resources>
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Application.Resources>
+    </Application.Resources>-->
 </Application>

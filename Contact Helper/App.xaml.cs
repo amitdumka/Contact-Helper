@@ -7,7 +7,7 @@
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXZdcHZVRGFeUUJyW0M=");
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new LoginPage();
         }
     }
 }

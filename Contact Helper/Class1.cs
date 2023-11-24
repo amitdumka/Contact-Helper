@@ -19,7 +19,7 @@ namespace Contact_Helper
 
         public static string AuthKey = null;
 
-        private static string InstallationId=null;
+        private static string InstallationId = null;
 
         public static ReturnData ReturnData = null;
         public static string BaseUrl = "https://account-asia-south1.truecaller.com/v2";
@@ -48,6 +48,9 @@ namespace Contact_Helper
             };
             _client = new HttpClient(handler2);
             _client.DefaultRequestHeaders.Add("Accept", "application/json");
+            _client.DefaultRequestHeaders.Add("accept-encoding", "gzip");
+            _client.DefaultRequestHeaders.Add("user-agent", "Truecaller/11.75.5 (Android;10)");
+            _client.DefaultRequestHeaders.Add("clientsecret", "lvc22mp3l1sfv6ujg83rd17btt");
 
             return _client;
         }
@@ -79,200 +82,231 @@ namespace Contact_Helper
 
         public static async Task<bool> LoginRequestAsync(string phoneNumber)
         {
-            var cCode = "+91";
-            var dCode = "In";
+            var cCode = "IN";
+            var dCode = "+91";
             Uri uri = new Uri(OTPReguest_url);
+
             LoginData data = new LoginData
             {
                 PhoneNumber = phoneNumber,
+                countryCode = cCode,
+                DialingCode = dCode,
+                Region = "region-2",
+                SequenceNo = 2,
+                InstallationDetails = new InstallationDetails
+                {
+                    Language = "en",
+                    App = new AppData { BuildVersion = "5", MajorVersion = "11", MinorVersion = "7", Store = "GOOGLE_STORE" },
+                    Device = new Device
+                    {
+                        Language = "en",
+                        DeviceId = RandomString(16),
+                        Manufacturer = "OnePlus",
+                        MobileServices = new string[] { "GSM" },
+                        Model = "OnePlus 8T",
+                        OsName = "Android",
+                        OsVersion = "10"
+                    }
+                }
             };
 
             try
             {
-                string json = JsonSerializer.Serialize<LoginData>(data, _serializerOptions);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = null;
+              var data2 = "{\"countryCode\": IN,\"dialingCode\": +91, \"installationDetails\": {\"app\": {\"buildVersion\": 5,\"majorVersion\": 11,\"minorVersion\": 7,\"store\": \"GOOGLE_PLAY\",},\"device\": {\"deviceId\": await generate_random_string(16),\"language\": \"en\", \"manufacturer\": device[\"manufacturer\"],\"model\": device[\"model\"], \"osName\": \"Android\",\"osVersion\": \"10\",\"mobileServices\": [\"GMS\"],},\"language\": \"en\",},\"phoneNumber\": 7779997556,\"region\": \"region-2\",\"sequenceNo\": 2,}";
+
+            // string json = JsonSerializer.Serialize<LoginData>(data, _serializerOptions);
+             StringContent content = new StringContent(data2, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = null;
+
+            _client = GetAuthClient();
+            response = await _client.PostAsync(uri, content);
 
 
-                response = await _client.PostAsync(uri, content);
-
-
-                if (response.IsSuccessStatusCode)
-                {
-                    Notify.NotifyVShort("Save successfully");
-                    //var obj = await response.Content.ReadFromJsonAsync<T>();
-                    return true;
-                }
-                else
-                {
-                 Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
-                    return false;
-                }
+            if (response.IsSuccessStatusCode)
+            {
+                Notify.NotifyVShort("Save successfully");
+                //var obj = await response.Content.ReadFromJsonAsync<T>();
+                return true;
             }
+            else
+            {
+                Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
+                return false;
+            }
+        }
             catch (Exception ex)
             {
                 Debug.WriteLine(@"\tERROR {0}", ex.Message);
                 Notify.NotifyVShort($"Error, {ex.Message}");
                 return false;
             }
-        }
-        public static async Task<bool> OTPVerifAsync(string phoneNumber, string otp)
+}
+public static async Task<bool> OTPVerifAsync(string phoneNumber, string otp)
+{
+    var url = "https://account-asia-south1.truecaller.com/v1/verifyOnboardingOtp";
+    var requestId = "";
+
+    var cCode = "+91";
+    var dCode = "In";
+
+    Uri uri = new Uri(url);
+    string post_data = $" {{ \"countryCode\": {cCode}, \"dialingCode\": {dCode},\"phoneNumber\": {phoneNumber},\"requestId\": json_data[\"requestId\"],\"token\": {otp} }}";
+
+    try
+    {
+        string json = post_data;// JsonSerializer.Serialize<LoginData>(post_data, _serializerOptions);
+        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = null;
+
+
+        response = await _client.PostAsync(uri, content);
+
+
+        if (response.IsSuccessStatusCode)
         {
-            var url = "https://account-asia-south1.truecaller.com/v1/verifyOnboardingOtp";
-            var requestId = ""; 
+            Notify.NotifyVShort("Save successfully");
+            AuthKey = await response.Content.ReadAsStringAsync();
 
-            var cCode = "+91";
-            var dCode = "In";
-
-            Uri uri = new Uri(url);
-           string post_data= $" {{ \"countryCode\": {cCode}, \"dialingCode\": {dCode},\"phoneNumber\": {phoneNumber},\"requestId\": json_data[\"requestId\"],\"token\": {otp} }}";
-
-            try
-            {
-                string json = post_data;// JsonSerializer.Serialize<LoginData>(post_data, _serializerOptions);
-                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = null;
-
-
-                response = await _client.PostAsync(uri, content);
-
-
-                if (response.IsSuccessStatusCode)
-                {
-                    Notify.NotifyVShort("Save successfully");
-                    AuthKey = await response.Content.ReadAsStringAsync();
-                    
-                    return true;
-                }
-                else
-                {
-                    Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                Notify.NotifyVShort($"Error, {ex.Message}");
-                return false;
-            }
+            return true;
         }
-
-
-        public static async Task<ReturnData> SearchNumber(string countryCode, string phoneNumber, string searchType)
+        else
         {
-            // a1i0G--jKJWQUkNVMDc1aAXSfd_UU4ILsbSjOe991oDag9TfXtINJuEiS72ToXQC
-            string url = "";
-            Uri uri = new Uri(url);
-            var headers = $"{{ \"content-type\": \"application/json; charset=UTF-8\", \"accept-encoding\": \"gzip\", \"user-agent\": \"Truecaller/11.75.5 (Android;10)\", \"Authorization\": f\"Bearer {InstallationId}\" }}";
-            var pms = $"{{ \"q\": {phoneNumber}, \"countryCode\": {countryCode}, \"type\": 4, \"locAddr\": \"\", \"placement\": \"SEARCHRESULTS,HISTORY,DETAILS\", \"encoding\": \"json\" }}";
+            Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
+            return false;
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine(@"\tERROR {0}", ex.Message);
+        Notify.NotifyVShort($"Error, {ex.Message}");
+        return false;
+    }
+}
 
-            try
+
+public static async Task<ReturnData> SearchNumber(string countryCode, string phoneNumber, string searchType)
+{
+    // a1i0G--jKJWQUkNVMDc1aAXSfd_UU4ILsbSjOe991oDag9TfXtINJuEiS72ToXQC
+    string url = "";
+    Uri uri = new Uri(url);
+    var headers = $"{{ \"content-type\": \"application/json; charset=UTF-8\", \"accept-encoding\": \"gzip\", \"user-agent\": \"Truecaller/11.75.5 (Android;10)\", \"Authorization\": f\"Bearer {InstallationId}\" }}";
+    var pms = $"{{ \"q\": {phoneNumber}, \"countryCode\": {countryCode}, \"type\": 4, \"locAddr\": \"\", \"placement\": \"SEARCHRESULTS,HISTORY,DETAILS\", \"encoding\": \"json\" }}";
+
+    try
+    {
+        try
+        {
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", InstallationId);
+
+            HttpResponseMessage response = await _client.GetAsync(uri);
+
+            if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    _client.DefaultRequestHeaders.Authorization= new System.Net.Http.Headers.AuthenticationHeaderValue("Basic",InstallationId) ;
-                    
-                    HttpResponseMessage response = await _client.GetAsync(uri);
-                    
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string content = await response.Content.ReadAsStringAsync();
-                        var data = JsonSerializer.Deserialize<ReturnData>(content);
-                        return data;
-                    }
-                    else
-                    {
-                        Notify.NotifyLong($"\tERROR {response.StatusCode} # {response.ReasonPhrase}");
-                        return null;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                    Notify.NotifyLong($"\tERROR {ex.Message}");
-                    return null;
-                }
+                string content = await response.Content.ReadAsStringAsync();
+                var data = JsonSerializer.Deserialize<ReturnData>(content);
+                return data;
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine(@"\tERROR {0}", ex.Message);
-                Notify.NotifyVShort($"Error, {ex.Message}");
+                Notify.NotifyLong($"\tERROR {response.StatusCode} # {response.ReasonPhrase}");
                 return null;
             }
         }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(@"\tERROR {0}", ex.Message);
+            Notify.NotifyLong($"\tERROR {ex.Message}");
+            return null;
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine(@"\tERROR {0}", ex.Message);
+        Notify.NotifyVShort($"Error, {ex.Message}");
+        return null;
+    }
+}
+private static Random random = new Random();
 
+public static string RandomString(int length)
+{
+    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return new string(Enumerable.Repeat(chars, length)
+        .Select(s => s[random.Next(s.Length)]).ToArray());
+}
     }
     public class AppData
-    {
-        public string BuildVersion { get; set; }
-        public string MajorVersion { get; set; }
-        public string MinorVersion { get; set; }
-        public string Store { get; set; }
-    }
-    public class Device
-    {
-        public string DeviceId { get; set; }// await generate_random_string(16),
-        public string Language { get; set; }// public string enpublic string ,
-        public string Manufacturer { get; set; }// device[public string manufacturerpublic string ],
-        public string Model { get; set; }// device[public string modelpublic string ],
-        public string OsName { get; set; }// public string Androidpublic string ,
-        public string OsVersion { get; set; }// public string 10public string ,
-        public string MobileServices { get; set; }// [public string GMSpublic string ],
-    }
-    public class InstallationDetails
-    {
-        public AppData App { get; set; }
-        public Device Device { get; set; }
-        public string Language { get; set; } = "en";
-    }
+{
+    public string BuildVersion { get; set; }
+    public string MajorVersion { get; set; }
+    public string MinorVersion { get; set; }
+    public string Store { get; set; }
+}
+public class Device
+{
+    public string DeviceId { get; set; }// await generate_random_string(16),
+    public string Language { get; set; }// public string enpublic string ,
+    public string Manufacturer { get; set; }// device[public string manufacturerpublic string ],
+    public string Model { get; set; }// device[public string modelpublic string ],
+    public string OsName { get; set; }// public string Androidpublic string ,
+    public string OsVersion { get; set; }// public string 10public string ,
+    public string[] MobileServices { get; set; }// [public string GMSpublic string ],
+}
+public class InstallationDetails
+{
+    public AppData App { get; set; }
+    public Device Device { get; set; }
+    public string Language { get; set; } = "en";
+}
 
-    public class LoginData
+public class LoginData
+{
+    public string countryCode { get; set; }
+    public string DialingCode { get; set; }
+    public InstallationDetails InstallationDetails { get; set; }
+
+
+    public string PhoneNumber { get; set; }
+    public string Region { get; set; }
+    public int SequenceNo { get; set; }
+}
+
+public class Headers
+{
+    public string Content_Type { get; set; } = "application/json; charset=UTF-8";
+    public string Accept_Encoding { get; set; } = "gzip";
+    public string User_Agent { get; set; } = "Truecaller/11.75.5 (Android;10)";
+    public string Clientsecret { get; set; } = "lvc22mp3l1sfv6ujg83rd17btt";
+}
+
+public class Conts
+{
+    public const string Headers = "{ \"content-type\": \"application/json; charset=UTF-8\",        \"accept-encoding\": \"gzip\",        \"user-agent\": \"Truecaller/11.75.5 (Android;10)\",        \"clientsecret\": \"lvc22mp3l1sfv6ujg83rd17btt\",    }";
+}
+
+public class Util
+{
+    public static string GetPhoneCountryCode(string phoneNumber)
     {
-        public string countryCode { get; set; }
-        public string DialingCode { get; set; }
-        public InstallationDetails InstallationDetails { get; set; }
-
-
-        public string PhoneNumber { get; set; }
-        public string Region { get; set; }
-        public int SequenceNo { get; set; }
-    }
-
-    public class Headers
-    {
-        public string Content_Type { get; set; } = "application/json; charset=UTF-8";
-        public string Accept_Encoding { get; set; } = "gzip";
-        public string User_Agent { get; set; } = "Truecaller/11.75.5 (Android;10)";
-        public string Clientsecret { get; set; } = "lvc22mp3l1sfv6ujg83rd17btt";
-    }
-
-    public class Conts
-    {
-        public const string Headers = "{ \"content-type\": \"application/json; charset=UTF-8\",        \"accept-encoding\": \"gzip\",        \"user-agent\": \"Truecaller/11.75.5 (Android;10)\",        \"clientsecret\": \"lvc22mp3l1sfv6ujg83rd17btt\",    }";
-    }
-
-    public class Util
-    {
-        public static string GetPhoneCountryCode(string phoneNumber)
-        {
-            return "+91";
-        }
-
-        public static string GetRandomDevice(int len = 10) { 
-            
-            return ""; 
-        }
+        return "+91";
     }
 
-
-
-    public class HttpsClientHandlerService
+    public static string GetRandomDevice(int len = 10)
     {
-        public HttpMessageHandler GetPlatformMessageHandler()
-        {
+
+        return "";
+    }
+}
+
+
+
+public class HttpsClientHandlerService
+{
+    public HttpMessageHandler GetPlatformMessageHandler()
+    {
 #if ANDROID
         var handler = new Xamarin.Android.Net.AndroidMessageHandler();
         handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
@@ -289,9 +323,9 @@ namespace Contact_Helper
         };
         return handler;
 #else
-            throw new PlatformNotSupportedException("Only Android and iOS supported.");
+        throw new PlatformNotSupportedException("Only Android and iOS supported.");
 #endif
-        }
+    }
 
 #if IOS
     public bool IsHttpsLocalhost(NSUrlSessionHandler sender, string url, Security.SecTrust trust)
@@ -301,16 +335,16 @@ namespace Contact_Helper
         return false;
     }
 #endif
-    }
+}
 
-    
 
-    
-    
 
-    
 
-    
+
+
+
+
+
 
 
 

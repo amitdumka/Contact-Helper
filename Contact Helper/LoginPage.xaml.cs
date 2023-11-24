@@ -22,13 +22,15 @@ namespace Contact_Helper
     public class LoginFormModel
     {
         [Display(Prompt = "Enter User name", Name = "User Name")]
+        [Phone]
         //[EmailAddress(ErrorMessage = "Enter your email - example@mail.com")]
         public string UserName { get; set; } = "AmitKumar";
 
         [Display(Name = "OTP")]
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Enter the password")]
-        public string Password { get; set; } = "Dumka@1234";
+        [Required(ErrorMessage = "Enter the password") ]
+        [MaxLength(6)]
+        public string Password { get; set; } = "123456";
     }
     public class SignInFormViewModel
     {
@@ -73,13 +75,10 @@ namespace Contact_Helper
             }
             if (this.otpButton != null)
             {
-                this.otpButton.Clicked += OnOtpButtonCliked;
+                this.otpButton.Clicked += OnOTPButtonCliked;
             }
         }
-        private async void OnOtpButtonCliked(object sender, EventArgs e)
-        {
-
-        }
+         
         /// <summary>
         /// Invokes on each data form item generation.
         /// </summary>
@@ -105,16 +104,34 @@ namespace Contact_Helper
                 if (this.dataForm.Validate())
                 {
                     var usr = dataForm.DataObject as LoginFormModel;
-                    var user = await RestService.DoLoginAsync(usr.UserName, usr.Password);
-
-                    if (user != null)
+                    var result = await APIServer.LoginRequestAsync(usr.UserName);
+                    if (result)
                     {
-                        Notify.NotifyVLong($"Welcome, {user.FullName}!, Now you can operate in , {user.Permission}, mode. ");
-                        Application.Current.MainPage = new AppShell();
-
+                        Notify.NotifyVShort("Enter OTP");
                     }
-                    else
-                        Notify.NotifyVLong($"User {usr.UserName} not Found ....");
+                    else Notify.NotifyVShort("Error");
+
+
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("", "Please enter the required details", "OK");
+                }
+            }
+        }
+        private async void OnOTPButtonCliked(object sender, EventArgs e)
+        {
+            if (this.dataForm != null && App.Current?.MainPage != null)
+            {
+                if (this.dataForm.Validate())
+                {
+                    var usr = dataForm.DataObject as LoginFormModel;
+                    var result=await   APIServer.LoginRequestAsync(usr.UserName);
+                    if(result)
+                    {
+                        Notify.NotifyVShort("Enter OTP");
+                    }
+                    else Notify.NotifyVShort("Error");
 
                 }
                 else
