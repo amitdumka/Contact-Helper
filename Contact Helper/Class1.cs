@@ -86,7 +86,7 @@ namespace Contact_Helper
                 HttpResponseMessage response = null;
 
                 _client = GetClient();
-                Uri uri = new Uri(BaseUrl + @"/logicCheck");
+                Uri uri = new Uri(BaseUrl + @"/loginCheck");
                 response = await _client.PostAsync(uri, content);
                 if (response.IsSuccessStatusCode)
                 {
@@ -197,7 +197,7 @@ namespace Contact_Helper
         {
             
             
-            Uri uri = new Uri(BaseUrl+@"/search");
+            Uri uri = new Uri(BaseUrl+ @"/search");
             
             try
             {
@@ -219,7 +219,7 @@ namespace Contact_Helper
                     }
                     else
                     {
-                        Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
+                        Notify.NotifyVShort($"Failed Get Search Result, {response.ReasonPhrase}");
                         return null;
                     }
                 }
