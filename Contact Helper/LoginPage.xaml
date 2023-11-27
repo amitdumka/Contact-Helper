@@ -34,6 +34,7 @@
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
                     <Grid.BindingContext>
                         <local:SignInFormViewModel/>
@@ -59,16 +60,19 @@
                         </HorizontalStackLayout>
                         <Label Text="Forgot password?" Grid.Column="1"  TextColor="{StaticResource Primary}" HorizontalTextAlignment="Center" Padding="10,0,0,0" FontSize="12"  VerticalOptions="Center" />
                     </Grid>
-                <Button Text="Get OTP" x:Name="otpButton" HeightRequest="40" VerticalOptions="End" HorizontalOptions="Fill" Margin="20,0,20,0" CornerRadius="10"
-                        Padding="0"  FontAttributes="Bold" Grid.Row="3" Background="{StaticResource Secondary}"/>
+                <Grid ColumnDefinitions="0.5*, 0.5*" Grid.Row="3" Padding="12,0,0,0" VerticalOptions="Start">
+                    <Button Text="Verify OTP" x:Name="otpButton" HeightRequest="40" VerticalOptions="End" HorizontalOptions="Fill" Margin="20,0,20,0" CornerRadius="10"
+                        Padding="0"  FontAttributes="Bold" Grid.Column="1" Background="{StaticResource Accent_Blue200}"/>
 
-                <Button Text="Sign In" x:Name="loginButton" HeightRequest="40" VerticalOptions="End"
+                    <Button Text="Sign In" x:Name="loginButton" HeightRequest="40" VerticalOptions="End"
                         HorizontalOptions="Fill" Margin="20,0,20,0" CornerRadius="10"
                         Padding="0"  FontAttributes="Bold"
-                        Grid.Row="3" Background="{StaticResource Primary}"/>
+                        Grid.Column="0" Background="{StaticResource Primary}"/>
+                </Grid>
+                
 
 
-                    <Label Grid.Row="4" Padding="0,12,0,0"
+                    <Label Grid.Row="5" Padding="0,12,0,0"
                        HorizontalOptions="Center"
                        HorizontalTextAlignment="Center"
                        FontSize="14">

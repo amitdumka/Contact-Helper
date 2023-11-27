@@ -9,6 +9,18 @@ using static Microsoft.Maui.Controls.Internals.Profile;
 
 namespace Contact_Helper
 {
+    public class SearchData
+    {
+        public SearchResult SearchResult { get; set; }
+        public string Status {  get; set; } 
+    }
+    public class SearchResult
+    {
+        public string Status_Code {  get; set; }    
+        public  RootData Data { get; set; }
+    }
+    
+
     public class ReturnData
     {
         [JsonPropertyName("status_code")]

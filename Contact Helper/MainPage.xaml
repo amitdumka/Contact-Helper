@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
              x:Class="Contact_Helper.MainPage">
 
     <ScrollView>
@@ -8,10 +9,10 @@
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
- 
+
 
             <Label
-                Text="Welcome to .NET Multi-platform App UI"
+                Text="Welcome to .Contact Cleaner"
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                 FontSize="18"
@@ -23,6 +24,18 @@
                 SemanticProperties.Hint="Counts the number of times you click"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center" />
+
+            <Label Text="Search By Number" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Center"/>
+            <Entry Placeholder="Phone Number with Country Code" Keyboard="Telephone" x:Name="PhoneNumberEntry" HorizontalOptions="Center"/>
+            <StackLayout Padding="20">
+                <Label x:Name="label" Text="Option" Margin="0,10"/>
+                <syncfusion:SfCheckBox x:Name="ByName" Text="Name" CornerRadius="5.0" CheckedColor="Red" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Center"/>
+                <syncfusion:SfCheckBox x:Name="ByEmail" Text="Email" CornerRadius="5.0" CheckedColor="Purple" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Center"/>
+                <syncfusion:SfCheckBox x:Name="ByRaw" Text="Raw Data" IsChecked="True" CornerRadius="5.0" CheckedColor="Green" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Center"/>
+
+            </StackLayout>
+
+            <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
 
         </VerticalStackLayout>
     </ScrollView>

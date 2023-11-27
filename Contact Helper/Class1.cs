@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using static Microsoft.Maui.Controls.Internals.Profile;
-using static System.Net.WebRequestMethods;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Contact_Helper
 {
@@ -22,8 +13,8 @@ namespace Contact_Helper
         private static string InstallationId = null;
 
         public static ReturnData ReturnData = null;
-        public static string BaseUrl = "https://account-asia-south1.truecaller.com/v2";
-        public static string OTPReguest_url = "https://account-asia-south1.truecaller.com/v2/sendOnboardingOtp";
+        public static string BaseUrl = "http://152.67.78.183";
+
         private static HttpClient _client;
         private static JsonSerializerOptions _serializerOptions;
 
@@ -79,237 +70,251 @@ namespace Contact_Helper
         }
 
 
-
-        public static async Task<bool> LoginRequestAsync(string phoneNumber)
+        internal class TC { public string PhoneNumber { get; set; } }
+        public static async Task<LoginCheck> LoginCheckAsync(string phoneNumber)
         {
-            var cCode = "IN";
-            var dCode = "+91";
-            Uri uri = new Uri(OTPReguest_url);
-
-            //LoginData data = new LoginData
-            //{
-            //    PhoneNumber = phoneNumber,
-            //    countryCode = cCode,
-            //    DialingCode = dCode,
-            //    Region = "region-2",
-            //    SequenceNo = 2,
-            //    InstallationDetails = new InstallationDetails
-            //    {
-            //        Language = "en",
-            //        App = new AppData { BuildVersion = "5", MajorVersion = "11", MinorVersion = "7", Store = "GOOGLE_STORE" },
-            //        Device = new Device
-            //        {
-            //            Language = "en",
-            //            DeviceId = RandomString(16),
-            //            Manufacturer = "OnePlus",
-            //            MobileServices = new string[] { "GSM" },
-            //            Model = "OnePlus 8T",
-            //            OsName = "Android",
-            //            OsVersion = "10"
-            //        }
-            //    }
-            //};
 
             try
             {
 
-                //var data2 = "{\"countryCode\": IN,\"dialingCode\": +91, \"installationDetails\": {\"app\": {\"buildVersion\": 5,\"majorVersion\": 11,\"minorVersion\": 7,\"store\": \"GOOGLE_PLAY\",},\"device\": {\"deviceId\": await generate_random_string(16),\"language\": \"en\", \"manufacturer\": device[\"manufacturer\"],\"model\": device[\"model\"], \"osName\": \"Android\",\"osVersion\": \"10\",\"mobileServices\": [\"GMS\"],},\"language\": \"en\",},\"phoneNumber\": 7779997556,\"region\": \"region-2\",\"sequenceNo\": 2,}";
-                using var stream = await FileSystem.OpenAppPackageFileAsync("data.json");
-                using var reader = new StreamReader(stream);
 
-                var data2 = reader.ReadToEnd();
-                // string json = JsonSerializer.Serialize<LoginData>(data, _serializerOptions);
-                StringContent content = new StringContent(data2, Encoding.UTF8, "application/json");
+                TC data = new TC { PhoneNumber = phoneNumber };
 
-            HttpResponseMessage response = null;
+                string json = JsonSerializer.Serialize<TC>(data, _serializerOptions);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            _client = GetAuthClient();
-            response = await _client.PostAsync(uri, content);
+                HttpResponseMessage response = null;
 
-
-            if (response.IsSuccessStatusCode)
-            {
-                Notify.NotifyVShort("Save successfully");
-                //var obj = await response.Content.ReadFromJsonAsync<T>();
-                return true;
+                _client = GetClient();
+                Uri uri = new Uri(BaseUrl + @"/logicCheck");
+                response = await _client.PostAsync(uri, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Notify.NotifyVShort("Save successfully");
+                    var obj = await response.Content.ReadFromJsonAsync<LoginCheck>();
+                    return obj;
+                }
+                else
+                {
+                    Notify.NotifyVShort($"Failed Get Check, {response.ReasonPhrase}");
+                    return null;
+                }
             }
-            else
-            {
-                Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
-                return false;
-            }
-        }
             catch (Exception ex)
             {
                 Debug.WriteLine(@"\tERROR {0}", ex.Message);
                 Notify.NotifyVShort($"Error, {ex.Message}");
-                return false;
-            }
-}
-public static async Task<bool> OTPVerifAsync(string phoneNumber, string otp)
-{
-    var url = "https://account-asia-south1.truecaller.com/v1/verifyOnboardingOtp";
-    var requestId = "";
-
-    var cCode = "+91";
-    var dCode = "In";
-
-    Uri uri = new Uri(url);
-    string post_data = $" {{ \"countryCode\": {cCode}, \"dialingCode\": {dCode},\"phoneNumber\": {phoneNumber},\"requestId\": json_data[\"requestId\"],\"token\": {otp} }}";
-
-    try
-    {
-        string json = post_data;// JsonSerializer.Serialize<LoginData>(post_data, _serializerOptions);
-        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        HttpResponseMessage response = null;
-
-
-        response = await _client.PostAsync(uri, content);
-
-
-        if (response.IsSuccessStatusCode)
-        {
-            Notify.NotifyVShort("Save successfully");
-            AuthKey = await response.Content.ReadAsStringAsync();
-
-            return true;
-        }
-        else
-        {
-            Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
-            return false;
-        }
-    }
-    catch (Exception ex)
-    {
-        Debug.WriteLine(@"\tERROR {0}", ex.Message);
-        Notify.NotifyVShort($"Error, {ex.Message}");
-        return false;
-    }
-}
-
-
-public static async Task<ReturnData> SearchNumber(string countryCode, string phoneNumber, string searchType)
-{
-    // a1i0G--jKJWQUkNVMDc1aAXSfd_UU4ILsbSjOe991oDag9TfXtINJuEiS72ToXQC
-    string url = "";
-    Uri uri = new Uri(url);
-    var headers = $"{{ \"content-type\": \"application/json; charset=UTF-8\", \"accept-encoding\": \"gzip\", \"user-agent\": \"Truecaller/11.75.5 (Android;10)\", \"Authorization\": f\"Bearer {InstallationId}\" }}";
-    var pms = $"{{ \"q\": {phoneNumber}, \"countryCode\": {countryCode}, \"type\": 4, \"locAddr\": \"\", \"placement\": \"SEARCHRESULTS,HISTORY,DETAILS\", \"encoding\": \"json\" }}";
-
-    try
-    {
-        try
-        {
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", InstallationId);
-
-            HttpResponseMessage response = await _client.GetAsync(uri);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<ReturnData>(content);
-                return data;
-            }
-            else
-            {
-                Notify.NotifyLong($"\tERROR {response.StatusCode} # {response.ReasonPhrase}");
                 return null;
             }
         }
-        catch (Exception ex)
+        public static async Task<LoginOtp> LoginRequestAsync(string phoneNumber)
         {
-            Debug.WriteLine(@"\tERROR {0}", ex.Message);
-            Notify.NotifyLong($"\tERROR {ex.Message}");
-            return null;
+
+            try
+            {
+
+
+                TC data = new TC { PhoneNumber = phoneNumber };
+
+                string json = JsonSerializer.Serialize<TC>(data, _serializerOptions);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = null;
+
+                _client = GetClient();
+                response = await _client.PostAsync(BaseUrl + @"/getotp", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Notify.NotifyVShort("successfully");
+                    var obj = await response.Content.ReadFromJsonAsync<LoginOtp>();
+                    return obj;
+                }
+                else
+                {
+                    Notify.NotifyVShort($"Failed Get Check, {response.ReasonPhrase}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                Notify.NotifyVShort($"Error, {ex.Message}");
+                return null;
+            }
+        }
+        internal class TC2
+        {
+            public string PhoneNumber { get; set; }
+            public string OTP { get; set; }
+            public string IntallId { get; set; }
+        }
+        public static async Task<LoginReturn> OTPVerifAsync(string phoneNumber, string otp, string installid)
+        {
+            TC2 data = new TC2 { IntallId = installid, OTP = otp, PhoneNumber = phoneNumber };
+
+            Uri uri = new Uri(BaseUrl + @"/verifyOtp");
+
+
+            try
+            {
+                _client = GetClient();
+                var json = JsonSerializer.Serialize<TC2>(data, _serializerOptions);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = null;
+                response = await _client.PostAsync(uri, content);
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Notify.NotifyVShort("successfully");
+                    var obj = await response.Content.ReadFromJsonAsync<LoginReturn>();
+                    return obj;
+                }
+                else
+                {
+                    Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                Notify.NotifyVShort($"Error, {ex.Message}");
+                return null;
+            }
+        }
+
+        internal class TCS
+        {
+            public string PhoneNumber { get; set; }
+            public bool ByName { get; set; }
+            public bool ByEmail { get; set; }
+            public bool GetRaw { get; set; }
+        }
+
+
+        public static async Task<SearchData> SearchNumber(string phoneNumber, bool byName=false, bool byEmail=false, bool getRaw=false)
+        {
+            
+            
+            Uri uri = new Uri(BaseUrl+@"/search");
+            
+            try
+            {
+                try
+                {
+                    _client = GetClient();
+                    TCS data = new TCS { PhoneNumber = phoneNumber, ByEmail = byEmail , ByName = byName , GetRaw = getRaw  };
+
+                    var json = JsonSerializer.Serialize<TCS>(data, _serializerOptions);
+                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = null;
+                    response = await _client.PostAsync(uri, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Notify.NotifyVShort("successfully");
+                        var obj = await response.Content.ReadFromJsonAsync<SearchData>();
+                        return obj;
+                    }
+                    else
+                    {
+                        Notify.NotifyVShort($"Failed Get otp, {response.ReasonPhrase}");
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                    Notify.NotifyLong($"\tERROR {ex.Message}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                Notify.NotifyVShort($"Error, {ex.Message}");
+                return null;
+            }
+        }
+        private static Random random = new Random();
+
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
-    catch (Exception ex)
-    {
-        Debug.WriteLine(@"\tERROR {0}", ex.Message);
-        Notify.NotifyVShort($"Error, {ex.Message}");
-        return null;
-    }
-}
-private static Random random = new Random();
-
-public static string RandomString(int length)
-{
-    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return new string(Enumerable.Repeat(chars, length)
-        .Select(s => s[random.Next(s.Length)]).ToArray());
-}
-    }
     public class AppData
-{
-    public string BuildVersion { get; set; }
-    public string MajorVersion { get; set; }
-    public string MinorVersion { get; set; }
-    public string Store { get; set; }
-}
-public class Device
-{
-    public string DeviceId { get; set; }// await generate_random_string(16),
-    public string Language { get; set; }// public string enpublic string ,
-    public string Manufacturer { get; set; }// device[public string manufacturerpublic string ],
-    public string Model { get; set; }// device[public string modelpublic string ],
-    public string OsName { get; set; }// public string Androidpublic string ,
-    public string OsVersion { get; set; }// public string 10public string ,
-    public string[] MobileServices { get; set; }// [public string GMSpublic string ],
-}
-public class InstallationDetails
-{
-    public AppData App { get; set; }
-    public Device Device { get; set; }
-    public string Language { get; set; } = "en";
-}
-
-public class LoginData
-{
-    public string countryCode { get; set; }
-    public string DialingCode { get; set; }
-    public InstallationDetails InstallationDetails { get; set; }
-
-
-    public string PhoneNumber { get; set; }
-    public string Region { get; set; }
-    public int SequenceNo { get; set; }
-}
-
-public class Headers
-{
-    public string Content_Type { get; set; } = "application/json; charset=UTF-8";
-    public string Accept_Encoding { get; set; } = "gzip";
-    public string User_Agent { get; set; } = "Truecaller/11.75.5 (Android;10)";
-    public string Clientsecret { get; set; } = "lvc22mp3l1sfv6ujg83rd17btt";
-}
-
-public class Conts
-{
-    public const string Headers = "{ \"content-type\": \"application/json; charset=UTF-8\",        \"accept-encoding\": \"gzip\",        \"user-agent\": \"Truecaller/11.75.5 (Android;10)\",        \"clientsecret\": \"lvc22mp3l1sfv6ujg83rd17btt\",    }";
-}
-
-public class Util
-{
-    public static string GetPhoneCountryCode(string phoneNumber)
     {
-        return "+91";
+        public string BuildVersion { get; set; }
+        public string MajorVersion { get; set; }
+        public string MinorVersion { get; set; }
+        public string Store { get; set; }
+    }
+    public class Device
+    {
+        public string DeviceId { get; set; }// await generate_random_string(16),
+        public string Language { get; set; }// public string enpublic string ,
+        public string Manufacturer { get; set; }// device[public string manufacturerpublic string ],
+        public string Model { get; set; }// device[public string modelpublic string ],
+        public string OsName { get; set; }// public string Androidpublic string ,
+        public string OsVersion { get; set; }// public string 10public string ,
+        public string[] MobileServices { get; set; }// [public string GMSpublic string ],
+    }
+    public class InstallationDetails
+    {
+        public AppData App { get; set; }
+        public Device Device { get; set; }
+        public string Language { get; set; } = "en";
     }
 
-    public static string GetRandomDevice(int len = 10)
+    public class LoginData
     {
+        public string countryCode { get; set; }
+        public string DialingCode { get; set; }
+        public InstallationDetails InstallationDetails { get; set; }
 
-        return "";
+
+        public string PhoneNumber { get; set; }
+        public string Region { get; set; }
+        public int SequenceNo { get; set; }
     }
-}
 
-
-
-public class HttpsClientHandlerService
-{
-    public HttpMessageHandler GetPlatformMessageHandler()
+    public class Headers
     {
+        public string Content_Type { get; set; } = "application/json; charset=UTF-8";
+        public string Accept_Encoding { get; set; } = "gzip";
+        public string User_Agent { get; set; } = "Truecaller/11.75.5 (Android;10)";
+        public string Clientsecret { get; set; } = "lvc22mp3l1sfv6ujg83rd17btt";
+    }
+
+    public class Conts
+    {
+        public const string Headers = "{ \"content-type\": \"application/json; charset=UTF-8\",        \"accept-encoding\": \"gzip\",        \"user-agent\": \"Truecaller/11.75.5 (Android;10)\",        \"clientsecret\": \"lvc22mp3l1sfv6ujg83rd17btt\",    }";
+    }
+
+    public class Util
+    {
+        public static string GetPhoneCountryCode(string phoneNumber)
+        {
+            return "+91";
+        }
+
+        public static string GetRandomDevice(int len = 10)
+        {
+
+            return "";
+        }
+    }
+
+
+
+    public class HttpsClientHandlerService
+    {
+        public HttpMessageHandler GetPlatformMessageHandler()
+        {
 #if ANDROID
         var handler = new Xamarin.Android.Net.AndroidMessageHandler();
         handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
@@ -326,9 +331,9 @@ public class HttpsClientHandlerService
         };
         return handler;
 #else
-        throw new PlatformNotSupportedException("Only Android and iOS supported.");
+            throw new PlatformNotSupportedException("Only Android and iOS supported.");
 #endif
-    }
+        }
 
 #if IOS
     public bool IsHttpsLocalhost(NSUrlSessionHandler sender, string url, Security.SecTrust trust)
@@ -338,7 +343,7 @@ public class HttpsClientHandlerService
         return false;
     }
 #endif
-}
+    }
 
 
 

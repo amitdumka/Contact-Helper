@@ -20,5 +20,20 @@
 
             SemanticScreenReader.Announce(CounterBtn.Text);
         }
+
+        private async void searchButton_Clicked(object sender, EventArgs e)
+        {
+            var data = await TCallerAPI.SearchNumber(PhoneNumberEntry.Text, (bool)ByName.IsChecked, (bool)ByEmail.IsChecked, (bool)ByRaw.IsChecked) ;
+
+            if (data != null)
+            {
+                if (data.Status != "error" && data.SearchResult!=null && data.SearchResult.Data!=null && data.SearchResult.Data.Data!=null && data.SearchResult.Data.Data.Count>0)
+                {
+                    var xData=data.SearchResult.Data.Data[0];
+                    Notify.NotifyVLong(xData.Name);
+
+                }
+            }
+        }
     }
 }

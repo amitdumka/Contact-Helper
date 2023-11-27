@@ -28,7 +28,7 @@ namespace Contact_Helper
 
         [Display(Name = "OTP")]
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Enter the password") ]
+        [Required(ErrorMessage = "Enter the password")]
         [MaxLength(6)]
         public string Password { get; set; } = "123456";
     }
@@ -78,7 +78,7 @@ namespace Contact_Helper
                 this.otpButton.Clicked += OnOTPButtonCliked;
             }
         }
-         
+
         /// <summary>
         /// Invokes on each data form item generation.
         /// </summary>
@@ -104,12 +104,30 @@ namespace Contact_Helper
                 if (this.dataForm.Validate())
                 {
                     var usr = dataForm.DataObject as LoginFormModel;
-                    var result = await APIServer.LoginRequestAsync(usr.UserName);
+                    var result = await TCallerAPI.DoLoginCheckAsync(usr.UserName);
+
                     if (result)
                     {
-                        Notify.NotifyVShort("Enter OTP");
+                        Notify.NotifyVShort(" Already LoggedIn");
+                        //TODO: Move to Search Page
+                        App.Current.MainPage = new MainPage(); 
                     }
-                    else Notify.NotifyVShort("Error");
+
+                    else
+                    {
+                        Notify.NotifyVShort("Need to Login!");
+                        var result2 = await TCallerAPI.DoLogin(usr.UserName);
+                        if (!result2)
+                        {
+                            Notify.NotifyVLong("Error Occured , Try again!");
+                        }
+                        else
+                        {
+                            Notify.NotifyVLong("Entry OTP to Login");
+                            var bb = sender as Button;
+                            bb.IsEnabled = false;
+                        }
+                    }
 
 
                 }
@@ -119,6 +137,8 @@ namespace Contact_Helper
                 }
             }
         }
+
+
         private async void OnOTPButtonCliked(object sender, EventArgs e)
         {
             if (this.dataForm != null && App.Current?.MainPage != null)
@@ -126,12 +146,13 @@ namespace Contact_Helper
                 if (this.dataForm.Validate())
                 {
                     var usr = dataForm.DataObject as LoginFormModel;
-                    var result=await   APIServer.LoginRequestAsync(usr.UserName);
-                    if(result)
+                    var result = await TCallerAPI.VerifyOTP(usr.Password);
+                    
+                    if (result)
                     {
-                        Notify.NotifyVShort("Enter OTP");
+                        App.Current.MainPage = new MainPage();
                     }
-                    else Notify.NotifyVShort("Error");
+                    else Notify.NotifyVShort("Error, Occured! or OTP is incorrect!");
 
                 }
                 else
@@ -155,7 +176,7 @@ namespace Contact_Helper
             }
         }
     }
-    
+
 
     public static class Notify
     {
