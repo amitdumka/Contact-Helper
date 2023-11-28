@@ -1,4 +1,6 @@
-﻿namespace Contact_Helper
+﻿using System.Text.Json;
+
+namespace Contact_Helper
 {
     public partial class MainPage : ContentPage
     {
@@ -7,7 +9,7 @@
         public MainPage()
         {
             InitializeComponent();
-            treeView.ItemsSource = new SearchData();
+           // treeView.ItemsSource = new SearchData();
         }
 
         private void OnCounterClicked(object sender, EventArgs e)
@@ -31,10 +33,10 @@
                 if (data.Status != "error" && data.SearchResult!=null && data.SearchResult.Data!=null && data.SearchResult.Data.Data!=null && data.SearchResult.Data.Data.Count>0)
                 {
                     var xData=data.SearchResult.Data.Data[0];
-                    treeView.ItemsSource = xData;
-                    treeView.RefreshView();
-                    treeView.ResetTreeViewItems(xData);
-                    treeView.RefreshView();
+                    treeView.Text =await JsonSerializer.SerializeAsync(xData);
+                    ///treeView.RefreshView();
+                    //treeView.ResetTreeViewItems(xData);
+                    //treeView.RefreshView();
                     Notify.NotifyVLong(xData.Name);
 
                 }

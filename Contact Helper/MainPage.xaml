@@ -45,7 +45,7 @@
 
             <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
 
-            <sftr:SfTreeView x:Name="treeView"  BackgroundColor="Beige"  ItemTemplateContextType="Item"/>
+            <Label x:Name="treeView"  BackgroundColor="Beige"  Text="" TextColor="Red"/>
         </VerticalStackLayout>
     </ScrollView>
 
