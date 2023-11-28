@@ -21,20 +21,19 @@
                 FontSize="18"
                 HorizontalOptions="Center" />
             <HorizontalStackLayout Padding="10" >
-
-
                 <Label TextColor="Red" Text="FileName" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
                 <Entry Placeholder="FileName" Keyboard="Telephone" x:Name="fileEntry" HorizontalOptions="Start"/>
+                <Button x:Name="FileSelect" Text="Select File" HorizontalOptions="Start" class="PrimaryButton" Clicked="FileSelect_Clicked"                        />
                 <Button x:Name="ExcelButton" Text="Search" HorizontalOptions="Center" Clicked ="ExcelButton_Clicked" class="PrimaryButton"/>
-                
+
             </HorizontalStackLayout>
 
 
             <HorizontalStackLayout Padding="10" >
-                
-            
-            <Label TextColor="Red" Text="Search By Number" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
-            <Entry Placeholder="Phone Number with Country Code" Keyboard="Telephone" x:Name="PhoneNumberEntry" HorizontalOptions="Start"/>
+
+
+                <Label TextColor="Red" Text="Search By Number" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
+                <Entry Placeholder="Phone Number with Country Code" Keyboard="Telephone" x:Name="PhoneNumberEntry" HorizontalOptions="Start"/>
             </HorizontalStackLayout>
             <StackLayout Padding="20" >
                 <Label x:Name="label" Text="Option" Margin="0,10" FontAttributes="Bold"  TextColor="Purple"/>
@@ -47,7 +46,7 @@
             <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
 
             <Label x:Name="treeView"  BackgroundColor="Beige"  Text="" TextColor="Red"/>
-            
+
         </VerticalStackLayout>
     </ScrollView>
 
