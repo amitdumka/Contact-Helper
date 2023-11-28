@@ -14,14 +14,7 @@ namespace Contact_Helper
 
         private void OnCounterClicked(object sender, EventArgs e)
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            
         }
 
         private async void searchButton_Clicked(object sender, EventArgs e)
@@ -33,7 +26,7 @@ namespace Contact_Helper
                 if (data.Status != "error" && data.SearchResult!=null && data.SearchResult.Data!=null && data.SearchResult.Data.Data!=null && data.SearchResult.Data.Data.Count>0)
                 {
                     var xData=data.SearchResult.Data.Data[0];
-                    treeView.Text =await JsonSerializer.SerializeAsync(xData);
+                    treeView.Text =  JsonSerializer.Serialize(xData);
                     ///treeView.RefreshView();
                     //treeView.ResetTreeViewItems(xData);
                     //treeView.RefreshView();
@@ -41,6 +34,16 @@ namespace Contact_Helper
 
                 }
             }
+        }
+
+        public void ReadExcelFile()
+        {
+
+        }
+
+        private void ExcelButton_Clicked(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -20,14 +20,15 @@
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                 FontSize="18"
                 HorizontalOptions="Center" />
+            <HorizontalStackLayout Padding="10" >
 
-            <Button
-                IsVisible="false"
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+
+                <Label TextColor="Red" Text="FileName" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
+                <Entry Placeholder="FileName" Keyboard="Telephone" x:Name="fileEntry" HorizontalOptions="Start"/>
+                <Button x:Name="ExcelButton" Text="Search" HorizontalOptions="Center" Clicked ="ExcelButton_Clicked" class="PrimaryButton"/>
+                
+            </HorizontalStackLayout>
+
 
             <HorizontalStackLayout Padding="10" >
                 
@@ -46,6 +47,7 @@
             <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
 
             <Label x:Name="treeView"  BackgroundColor="Beige"  Text="" TextColor="Red"/>
+            
         </VerticalStackLayout>
     </ScrollView>
 
