@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:sftr="clr-namespace:Syncfusion.Maui.TreeView;assembly=Syncfusion.Maui.TreeView"
              BackgroundColor="LightBlue" 
              x:Class="Contact_Helper.MainPage">
 
@@ -44,6 +45,7 @@
 
             <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
 
+            <sftr:SfTreeView x:Name="treeView"  BackgroundColor="Beige"  ItemTemplateContextType="Item"/>
         </VerticalStackLayout>
     </ScrollView>
 

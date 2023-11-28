@@ -1,9 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Syncfusion.Maui.DataForm;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace Contact_Helper
 {
@@ -23,7 +20,6 @@ namespace Contact_Helper
     {
         [Display(Prompt = "Enter User name", Name = "User Name")]
         [Phone]
-        //[EmailAddress(ErrorMessage = "Enter your email - example@mail.com")]
         public string UserName { get; set; } = "AmitKumar";
 
         [Display(Name = "OTP")]

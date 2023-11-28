@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using static Microsoft.Maui.Controls.Internals.Profile;
+﻿using System.Text.Json.Serialization;
 
 namespace Contact_Helper
 {
@@ -16,7 +9,7 @@ namespace Contact_Helper
     }
     public class SearchResult
     {
-        public string Status_Code {  get; set; }    
+        //public int? Status_Code {  get; set; }    
         public  RootData Data { get; set; }
     }
     
@@ -32,7 +25,7 @@ namespace Contact_Helper
     public class RootData
     {
         [JsonPropertyName("data")]
-        public List<Datum> Data { get; set; }
+        public List<Data> Data { get; set; }
         [JsonPropertyName("provider")]
         public string Provider { get; set; }
 

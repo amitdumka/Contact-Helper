@@ -214,6 +214,7 @@ namespace Contact_Helper
                     if (response.IsSuccessStatusCode)
                     {
                         Notify.NotifyVShort("successfully");
+                        var xx=await response.Content.ReadAsStringAsync();
                         var obj = await response.Content.ReadFromJsonAsync<SearchData>();
                         return obj;
                     }
