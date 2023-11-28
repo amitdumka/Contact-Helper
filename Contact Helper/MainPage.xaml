@@ -1,53 +1,129 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
-             xmlns:sftr="clr-namespace:Syncfusion.Maui.TreeView;assembly=Syncfusion.Maui.TreeView"
-             BackgroundColor="LightBlue" 
-             x:Class="Contact_Helper.MainPage">
+<ContentPage
+    x:Class="Contact_Helper.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sfG="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+    xmlns:sftr="clr-namespace:Syncfusion.Maui.TreeView;assembly=Syncfusion.Maui.TreeView"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+    BackgroundColor="LightBlue">
 
     <ScrollView>
         <VerticalStackLayout
-            Spacing="25"
             Padding="30,0"
+            Spacing="25"
             VerticalOptions="Center">
 
-
             <Label
-                TextColor="Red"
-                Text="Welcome to Contact Cleaner"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
                 FontSize="18"
-                HorizontalOptions="Center" />
-            <HorizontalStackLayout Padding="10" >
-                <Label TextColor="Red" Text="FileName" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
-                <Entry Placeholder="FileName" Keyboard="Telephone" x:Name="fileEntry" HorizontalOptions="Start"/>
-                <Button x:Name="FileSelect" Text="Select File" HorizontalOptions="Start" class="PrimaryButton" Clicked="FileSelect_Clicked"                        />
-                <Button x:Name="ExcelButton" Text="Search" HorizontalOptions="Center" Clicked ="ExcelButton_Clicked" class="PrimaryButton"/>
+                HorizontalOptions="Center"
+                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
+                SemanticProperties.HeadingLevel="Level2"
+                Text="Welcome to Contact Cleaner"
+                TextColor="Red" />
+            <VerticalStackLayout Padding="10">
+                <Label
+                    FontSize="18"
+                    HorizontalOptions="Start"
+                    SemanticProperties.HeadingLevel="Level2"
+                    Text="FileName"
+                    TextColor="Red" />
+                <Entry TextColor="Red"
+                    x:Name="fileEntry"
+                    HorizontalOptions="Start"
+                    Keyboard="Telephone"
+                    Placeholder="FileName" />
+                <Button
+                    x:Name="FileSelect"
+                    class="PrimaryButton"
+                    Clicked="FileSelect_Clicked"
+                    HorizontalOptions="Start"
+                    Text="Select File" />
+                <Button
+                    x:Name="ExcelButton"
+                    class="PrimaryButton"
+                    Clicked ="ExcelButton_Clicked"
+                    HorizontalOptions="Start"
+                    Text="Load" />
+                <Button
+                    x:Name="SearchExcel"
+                    class="PrimaryButton"
+                    Clicked ="SearchExcel_Clicked"
+                    HorizontalOptions="Start"
+                    Text="Search From Excel" />
+            </VerticalStackLayout>
 
+            <HorizontalStackLayout Padding="10">
+
+                <Label
+                    FontSize="18"
+                    HorizontalOptions="Start"
+                    SemanticProperties.HeadingLevel="Level2"
+                    Text="Search By Number"
+                    TextColor="Red" />
+                <Entry
+                    x:Name="PhoneNumberEntry"
+                    HorizontalOptions="Start"
+                    Keyboard="Telephone"
+                    Placeholder="Phone Number with Country Code" />
             </HorizontalStackLayout>
-
-
-            <HorizontalStackLayout Padding="10" >
-
-
-                <Label TextColor="Red" Text="Search By Number" SemanticProperties.HeadingLevel="Level2" FontSize="18" HorizontalOptions="Start"/>
-                <Entry Placeholder="Phone Number with Country Code" Keyboard="Telephone" x:Name="PhoneNumberEntry" HorizontalOptions="Start"/>
-            </HorizontalStackLayout>
-            <StackLayout Padding="20" >
-                <Label x:Name="label" Text="Option" Margin="0,10" FontAttributes="Bold"  TextColor="Purple"/>
-                <syncfusion:SfCheckBox x:Name="ByName"  FontAttributes="Bold" Text="Name" CornerRadius="5.0" CheckedColor="Red" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Start"/>
-                <syncfusion:SfCheckBox x:Name="ByEmail" FontAttributes="Bold" Text="Email" CornerRadius="5.0" CheckedColor="Purple" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Start"/>
-                <syncfusion:SfCheckBox x:Name="ByRaw" FontAttributes="Bold" Text="Raw Data" IsChecked="True" CornerRadius="5.0" CheckedColor="Green" UncheckedColor="Violet" TextColor="Blue" HorizontalTextAlignment="Start"/>
-
+            <StackLayout Padding="20">
+                <Label
+                    x:Name="label"
+                    Margin="0,10"
+                    FontAttributes="Bold"
+                    Text="Option"
+                    TextColor="Purple" />
+                <syncfusion:SfCheckBox
+                    x:Name="ByName"
+                    CheckedColor="Red"
+                    CornerRadius="5.0"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Start"
+                    Text="Name"
+                    TextColor="Blue"
+                    UncheckedColor="Violet" />
+                <syncfusion:SfCheckBox
+                    x:Name="ByEmail"
+                    CheckedColor="Purple"
+                    CornerRadius="5.0"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Start"
+                    Text="Email"
+                    TextColor="Blue"
+                    UncheckedColor="Violet" />
+                <syncfusion:SfCheckBox
+                    x:Name="ByRaw"
+                    CheckedColor="Green"
+                    CornerRadius="5.0"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Start"
+                    IsChecked="True"
+                    Text="Raw Data"
+                    TextColor="Blue"
+                    UncheckedColor="Violet" />
             </StackLayout>
 
-            <Button x:Name="searchButton" Text="Search" HorizontalOptions="Center" Clicked ="searchButton_Clicked" class="PrimaryButton"/>
+            <Button
+                x:Name="searchButton"
+                class="PrimaryButton"
+                Clicked ="searchButton_Clicked"
+                HorizontalOptions="Center"
+                Text="Search" />
 
-            <Label x:Name="treeView"  BackgroundColor="Beige"  Text="" TextColor="Red"/>
+            <Label
+                x:Name="treeView"
+                BackgroundColor="Beige"
+                Text=""
+                TextColor="Red" />
 
+           
+            <VerticalStackLayout Padding="10" VerticalOptions="StartAndExpand" HorizontalOptions="StartAndExpand" MinimumHeightRequest="320" MinimumWidthRequest="320">
+ <ScrollView>
+                <sfG:SfDataGrid BackgroundColor="Beige" HeaderGridLinesVisibility="Both" GridLinesVisibility="Both" x:Name="dataGrid" VerticalOptions="StartAndExpand"  VerticalScrollBarVisibility="Always" ItemsSource="{x:Binding Source=Contacts}"  MinimumHeightRequest="300" MinimumWidthRequest="300"/>
+                </ScrollView>
+            </VerticalStackLayout>
+           
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

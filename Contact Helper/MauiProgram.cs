@@ -21,6 +21,8 @@ namespace Contact_Helper
             }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup();
 
             builder.ConfigureSyncfusionCore();
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<DBClass>();
 
 #if DEBUG
             builder.Logging.AddDebug();

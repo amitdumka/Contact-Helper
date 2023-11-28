@@ -32,6 +32,13 @@
                 SessionData.InstallId = lc.InstallationId;
                 SessionData.CCode = lc.CCode;
                 SessionData.Status = "LoggedIn";
+
+                Preferences.Set("PhoneNumber", SessionData.PhoneNumber);
+                Preferences.Set("InstallId", SessionData.InstallId);
+                Preferences.Set("CCode", SessionData.CCode);
+                Preferences.Set("Status", SessionData.Status);
+                
+
                 return true;
 
             }
@@ -41,6 +48,10 @@
         public static Task<SearchData> SearchNumber(string PhoneNumber, bool name, bool email, bool raw)
         {
             return APIServer.SearchNumber(PhoneNumber, name, email, raw);
+        }
+        public static Task<SearchByName> SearchNumberByName(string PhoneNumber,bool raw)
+        {
+            return APIServer.SearchNumberByName(PhoneNumber, true, false, raw);
         }
 
         public static async Task<bool> DoLogin(string PhoneNumber)
@@ -69,6 +80,15 @@
                 {
                     SessionData.InstallId = ld.InstallationId;
                     SessionData.ResonseData = ld.Response;
+                    SessionData.Status = "LoggedIn";
+
+                    Preferences.Set("PhoneNumber", SessionData.PhoneNumber);
+                    Preferences.Set("InstallId", SessionData.InstallId);
+                    Preferences.Set("CCode", SessionData.CCode);
+                    Preferences.Set("Status", SessionData.Status);
+                    Preferences.Set("ResonseData", SessionData.ResonseData);
+
+
                     Notify.NotifyVLong($"Otp is verifed and logged in, {ld.Status}");
                     return true;
 

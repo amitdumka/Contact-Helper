@@ -5,6 +5,15 @@ using System.Text.Json;
 
 namespace Contact_Helper
 {
+
+    public class SearchByName
+    {
+        public string? Name { get; set; }
+        public string Status { get; set; }
+        public string? Email { get; set; }
+        public string? ErrMsg { get; set; }
+    }
+
     public class APIServer
     {
 
@@ -193,6 +202,54 @@ namespace Contact_Helper
         }
 
 
+        public static async Task<SearchByName> SearchNumberByName(string phoneNumber, bool byName = false, bool byEmail = false, bool getRaw = false)
+        {
+
+
+            Uri uri = new Uri(BaseUrl + @"/search");
+
+            try
+            {
+                try
+                {
+                    _client = GetClient();
+                    TCS data = new TCS { PhoneNumber = phoneNumber, ByEmail = byEmail, ByName = true, GetRaw = getRaw };
+
+                    var json = JsonSerializer.Serialize<TCS>(data, _serializerOptions);
+                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = null;
+                    response = await _client.PostAsync(uri, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        //Notify.NotifyVShort("successfully");
+
+                        var obj = await response.Content.ReadFromJsonAsync<SearchByName>();
+                        return obj;
+                    }
+                    else
+                    {
+                        Notify.NotifyVShort($"Failed Get Search Result, {response.ReasonPhrase}");
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                    Notify.NotifyLong($"\tERROR {ex.Message}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(@"\tERROR {0}", ex.Message);
+                Notify.NotifyVShort($"Error, {ex.Message}");
+                return null;
+            }
+        }
+
+
+
         public static async Task<SearchData> SearchNumber(string phoneNumber, bool byName=false, bool byEmail=false, bool getRaw=false)
         {
             
@@ -214,7 +271,7 @@ namespace Contact_Helper
                     if (response.IsSuccessStatusCode)
                     {
                         Notify.NotifyVShort("successfully");
-                        var xx=await response.Content.ReadAsStringAsync();
+                       
                         var obj = await response.Content.ReadFromJsonAsync<SearchData>();
                         return obj;
                     }

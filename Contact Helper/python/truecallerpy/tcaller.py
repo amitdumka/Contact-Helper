@@ -143,7 +143,27 @@ def searchFunction(phoneNumber,args_name,args_email,args_raw):
             except (AttributeError, IndexError, KeyError):
                 name = "Unknown Name"
 
-            return jsonify({"status":"error","errorMsg":  name if args_raw else name})
+            return jsonify({"status":"Ok","name":  name if args_raw else name})
+        elseif args_name and args_email:
+            try:
+                name = search_result["data"]['data'][0]['name']
+                ata = search_result["data"].get("data")
+                if data and len(data) > 0:
+                    internet_addresses = data[0].get("internetAddresses")
+                    if internet_addresses and len(internet_addresses) > 0:
+                        email = internet_addresses[0].get("id")
+                    else:
+                        email = "Unknown Email"
+                else:
+                    email = "Unknown Email"
+            except (AttributeError, IndexError, KeyError):
+                email = "Unknown Email"
+                name = "Unknown Name"
+            
+            return  return jsonify({"status":"Ok","name":  name if args_raw else name,"email":
+                email if args_raw else "Email:"+ email})
+
+
 
         elif not args_name and args_email:
             try:
@@ -160,7 +180,7 @@ def searchFunction(phoneNumber,args_name,args_email,args_raw):
             except (AttributeError, IndexError, KeyError):
                 email = "Unknown Email"
 
-            return jsonify({"status":"error","errorMsg":
+            return jsonify({"status":"Ok","email":
                 email if args_raw else "Email:"+ email})
         else:
             return jsonify({"status":"ok","searchResult":search_result if args_raw else json.dumps(

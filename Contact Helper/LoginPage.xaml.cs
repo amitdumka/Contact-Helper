@@ -6,21 +6,40 @@ namespace Contact_Helper
 {
     public partial class LoginPage : ContentPage
     {
+       
         public LoginPage()
         {
             InitializeComponent();
+            PreLoginCheck();
         }
         public LoginPage(AppShell ss)
         {
             InitializeComponent();
+           // PreLoginCheck();
+        }
+         
 
+        void PreLoginCheck()
+        {
+            
+
+            SessionData.PhoneNumber = Preferences.Get("PhoneNumber", "");
+
+            SessionData.InstallId = Preferences.Get("InstallId", "");
+            SessionData.CCode = Preferences.Get("CCode", "");
+            SessionData.Status = Preferences.Get("Status", "");
+            SessionData.ResonseData = Preferences.Get("ResonseData", "");
+            if(SessionData.PhoneNumber != null && SessionData.Status!=null && SessionData.Status=="LoggedIn") { 
+                //App.Current.MainPage= new MainPage();
+                App.Current.MainPage = new MainPage();
+            }
         }
     }
     public class LoginFormModel
     {
         [Display(Prompt = "Enter User name", Name = "User Name")]
-        [Phone]
-        public string UserName { get; set; } = "AmitKumar";
+       // [Phone]
+        public string UserName { get; set; } = "917779997556";
 
         [Display(Name = "OTP")]
         [DataType(DataType.Password)]
@@ -35,7 +54,7 @@ namespace Contact_Helper
         /// </summary>
         public SignInFormViewModel()
         {
-            this.LoginFormModel = new LoginFormModel();
+            this.LoginFormModel = new LoginFormModel { Password="123456", UserName="917779997556" };
         }
 
         /// <summary>

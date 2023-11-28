@@ -1,4 +1,6 @@
-﻿using Syncfusion.XlsIO;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Syncfusion.Drawing;
+using Syncfusion.XlsIO;
 using System.Data;
 using System.Drawing;
 using System.Reflection;
@@ -10,10 +12,17 @@ namespace Contact_Helper
     public partial class MainPage : ContentPage
     {
         int count = 0;
-
+        DataTable Contacts = null;
+        DBClass Db;
         public MainPage()
         {
             InitializeComponent();
+            this.Db = new DBClass(); ;
+        }
+        public MainPage(DBClass db)
+        {
+            InitializeComponent();
+            this.Db = db;
             // treeView.ItemsSource = new SearchData();
         }
 
@@ -24,6 +33,19 @@ namespace Contact_Helper
 
         private async void searchButton_Clicked(object sender, EventArgs e)
         {
+
+            if (ByName.IsChecked == true)
+            {
+                var name = await TCallerAPI.SearchNumberByName(PhoneNumberEntry.Text, (bool)ByRaw.IsChecked);
+                if (name != null && name.Status == "Ok")
+                {
+                    treeView.Text = name.Name;
+                    Notify.NotifyVLong(name.Name);
+
+
+                }
+            }
+
             var data = await TCallerAPI.SearchNumber(PhoneNumberEntry.Text, (bool)ByName.IsChecked, (bool)ByEmail.IsChecked, (bool)ByRaw.IsChecked);
 
             if (data != null)
@@ -50,7 +72,19 @@ namespace Contact_Helper
             IWorkbook workbook = application.Workbooks.Open(fileStream);
             IWorksheet worksheet = workbook.Worksheets[0];
             //Read data from the worksheet and Export to the DataTable
-            DataTable customersTable = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
+            DataTable table = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
+            Contacts = table;
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                DataRow row = table.Rows[i];
+                if (row["Mobile"] == null || string.IsNullOrEmpty(row["Mobile"].ToString()))
+                {
+                    Contacts.Rows.Remove(row);
+                }
+            }
+
+            dataGrid.BindingContext = this;
+            dataGrid.ItemsSource = Contacts;
 
 
 
@@ -58,7 +92,7 @@ namespace Contact_Helper
 
         private void ExcelButton_Clicked(object sender, EventArgs e)
         {
-
+            ReadExcelFile(fileEntry.Text.Trim());
         }
         public async Task<FileResult> PickAndShow(PickOptions? options)
         {
@@ -126,6 +160,69 @@ namespace Contact_Helper
                 }
                 stream.Dispose();
 
+            }
+        }
+
+        private async void SearchExcel_Clicked(object sender, EventArgs e)
+        {
+
+            if (Contacts != null && Contacts.Rows.Count > 0)
+            {
+                for (int i = 0; i < Contacts.Rows.Count; i++)
+                {
+                    DataRow row = Contacts.Rows[i];
+                    var ph = row["Mobile"].ToString();
+                    if (ph.StartsWith("+"))
+                    {
+
+
+                    }
+                    else if (ph.Length > 10 && !ph.StartsWith("+"))
+                    {
+                        ph = "+" + ph;
+                    }
+                    else if (ph.Length == 10)
+                    {
+                        ph = "+91" + ph;
+                    }
+                    else if (ph.Length < 10)
+                    {
+                        row["Remarks"] = "#Error#Check Mobile  number, it's length is less then 10 digit. ";
+                        ph = null;
+                    }
+                    if (ph != null)
+                    {
+                        var name = await TCallerAPI.SearchNumberByName(ph, true);
+                        if (name != null && name.Status == "Ok")
+                        {
+                            row["TrueCallerName"] = name.Name;
+                            if (name.Name == "Unknown Name")
+                                row["Remarks"] = "Failed";
+                            else
+                                row["Remarks"] = "OK";
+                        }
+                        else
+                        {
+                            row["Remarks"] = $"#Error#{name.Status}#{name.ErrMsg}";
+                        }
+                        row.AcceptChanges();
+                        await Db.SaveItemAsync(new ContactModel
+                        {
+                            CompanyName = row["CompanyName"].ToString(),
+                            Email = row["Email"].ToString(),
+                            FirstName = row["First Name"].ToString(),
+                            LastName = row["Last Name"].ToString(),
+                            TrueCallerName = row["TrueCallerName"].ToString(),
+                            Mobile = row["Mobile"].ToString(),
+                            Notes = row["Notes"].ToString(),
+                            Remarks = row["Remarks"].ToString()
+                        });
+                        await Task.Delay(2000);
+                    }
+                    row.AcceptChanges();
+
+
+                }
             }
         }
     }
