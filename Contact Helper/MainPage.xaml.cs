@@ -27,9 +27,6 @@ namespace Contact_Helper
                 {
                     var xData=data.SearchResult.Data.Data[0];
                     treeView.Text =  JsonSerializer.Serialize(xData);
-                    ///treeView.RefreshView();
-                    //treeView.ResetTreeViewItems(xData);
-                    //treeView.RefreshView();
                     Notify.NotifyVLong(xData.Name);
 
                 }
