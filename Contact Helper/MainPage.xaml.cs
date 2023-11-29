@@ -15,12 +15,12 @@ namespace Contact_Helper
             InitializeComponent();
             this.Db = new DBClass(); ;
         }
-        public MainPage(DBClass db)
-        {
-            InitializeComponent();
-            this.Db = db;
-            // treeView.ItemsSource = new SearchData();
-        }
+        //public MainPage(DBClass db)
+        //{
+        //    InitializeComponent();
+        //    this.Db = db;
+        //    // treeView.ItemsSource = new SearchData();
+        //}
 
         private void OnCounterClicked(object sender, EventArgs e)
         {

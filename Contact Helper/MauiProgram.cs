@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Markup;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Core.Hosting;
 
@@ -17,11 +16,11 @@ namespace Contact_Helper
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("InputLayoutIcons.ttf", "InputLayoutIcons");
                 fonts.AddFont("fa-solid-900.ttf", "FontAwesome");
-            }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup();
+            }).UseMauiCommunityToolkit();
 
             builder.ConfigureSyncfusionCore();
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<DBClass>();
+           // builder.Services.AddSingleton<MainPage>();
+            //builder.Services.AddSingleton<DBClass>();
 
 #if DEBUG
             builder.Logging.AddDebug();
