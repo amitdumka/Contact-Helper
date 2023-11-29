@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Syncfusion.Drawing;
-using Syncfusion.XlsIO;
+﻿using Syncfusion.XlsIO;
 using System.Data;
-using System.Drawing;
-using System.Reflection;
 using System.Text.Json;
 using IApplication = Syncfusion.XlsIO.IApplication;
 

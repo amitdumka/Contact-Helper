@@ -6,7 +6,7 @@ namespace Contact_Helper
 {
     public partial class LoginPage : ContentPage
     {
-       
+
         public LoginPage()
         {
             InitializeComponent();
@@ -15,13 +15,13 @@ namespace Contact_Helper
         public LoginPage(AppShell ss)
         {
             InitializeComponent();
-           // PreLoginCheck();
+            // PreLoginCheck();
         }
-         
+
 
         void PreLoginCheck()
         {
-            
+
 
             SessionData.PhoneNumber = Preferences.Get("PhoneNumber", "");
 
@@ -29,7 +29,8 @@ namespace Contact_Helper
             SessionData.CCode = Preferences.Get("CCode", "");
             SessionData.Status = Preferences.Get("Status", "");
             SessionData.ResonseData = Preferences.Get("ResonseData", "");
-            if(SessionData.PhoneNumber != null && SessionData.Status!=null && SessionData.Status=="LoggedIn") { 
+            if (SessionData.PhoneNumber != null && SessionData.Status != null && SessionData.Status == "LoggedIn")
+            {
                 //App.Current.MainPage= new MainPage();
                 App.Current.MainPage = new MainPage();
             }
@@ -38,7 +39,7 @@ namespace Contact_Helper
     public class LoginFormModel
     {
         [Display(Prompt = "Enter User name", Name = "User Name")]
-       // [Phone]
+        // [Phone]
         public string UserName { get; set; } = "917779997556";
 
         [Display(Name = "OTP")]
@@ -54,7 +55,7 @@ namespace Contact_Helper
         /// </summary>
         public SignInFormViewModel()
         {
-            this.LoginFormModel = new LoginFormModel { Password="123456", UserName="917779997556" };
+            this.LoginFormModel = new LoginFormModel { Password = "123456", UserName = "917779997556" };
         }
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace Contact_Helper
                     {
                         Notify.NotifyVShort(" Already LoggedIn");
                         //TODO: Move to Search Page
-                        App.Current.MainPage = new MainPage(); 
+                        App.Current.MainPage = new MainPage();
                     }
 
                     else
@@ -162,7 +163,7 @@ namespace Contact_Helper
                 {
                     var usr = dataForm.DataObject as LoginFormModel;
                     var result = await TCallerAPI.VerifyOTP(usr.Password);
-                    
+
                     if (result)
                     {
                         App.Current.MainPage = new MainPage();

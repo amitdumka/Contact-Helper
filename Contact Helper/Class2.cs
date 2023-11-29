@@ -5,14 +5,14 @@ namespace Contact_Helper
     public class SearchData
     {
         public SearchResult SearchResult { get; set; }
-        public string Status {  get; set; } 
+        public string Status { get; set; }
     }
     public class SearchResult
     {
         //public int? Status_Code {  get; set; }    
-        public  RootData Data { get; set; }
+        public RootData Data { get; set; }
     }
-    
+
 
     public class ReturnData
     {
@@ -34,8 +34,8 @@ namespace Contact_Helper
 
 
     }
-    
-    
+
+
     public class Data
     {
         [JsonPropertyName("id")]

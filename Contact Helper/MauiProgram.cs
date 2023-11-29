@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
-
-using Syncfusion.Maui.Core.Hosting;
 using CommunityToolkit.Maui.Markup;
-using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace Contact_Helper
 {

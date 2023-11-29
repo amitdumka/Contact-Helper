@@ -2,8 +2,8 @@
 
 public partial class AKSTheme : ResourceDictionary
 {
-	public AKSTheme()
-	{
+    public AKSTheme()
+    {
         InitializeComponent();
-	}
+    }
 }

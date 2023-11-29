@@ -250,18 +250,40 @@ namespace Contact_Helper
 
 
 
-        public static async Task<SearchData> SearchNumber(string phoneNumber, bool byName=false, bool byEmail=false, bool getRaw=false)
+        public static async Task<SearchData> SearchNumber(string phoneNumber, bool byName = false, bool byEmail = false, bool getRaw = false)
         {
-            
-            
-            Uri uri = new Uri(BaseUrl+ @"/search");
-            
+
+
+
+            /* Unmerged change from project 'Contact Helper (net7.0-maccatalyst)'
+            Before:
+                        Uri uri = new Uri(BaseUrl+ @"/search");
+
+                        try
+            After:
+                        Uri uri = new Uri(BaseUrl+ @"/search");
+
+                        try
+            */
+
+            /* Unmerged change from project 'Contact Helper (net7.0-windows10.0.19041.0)'
+            Before:
+                        Uri uri = new Uri(BaseUrl+ @"/search");
+
+                        try
+            After:
+                        Uri uri = new Uri(BaseUrl+ @"/search");
+
+                        try
+            */
+            Uri uri = new Uri(BaseUrl + @"/search");
+
             try
             {
                 try
                 {
                     _client = GetClient();
-                    TCS data = new TCS { PhoneNumber = phoneNumber, ByEmail = byEmail , ByName = byName , GetRaw = getRaw  };
+                    TCS data = new TCS { PhoneNumber = phoneNumber, ByEmail = byEmail, ByName = byName, GetRaw = getRaw };
 
                     var json = JsonSerializer.Serialize<TCS>(data, _serializerOptions);
                     StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -271,7 +293,7 @@ namespace Contact_Helper
                     if (response.IsSuccessStatusCode)
                     {
                         Notify.NotifyVShort("successfully");
-                       
+
                         var obj = await response.Content.ReadFromJsonAsync<SearchData>();
                         return obj;
                     }
@@ -374,32 +396,32 @@ namespace Contact_Helper
         public HttpMessageHandler GetPlatformMessageHandler()
         {
 #if ANDROID
-        var handler = new Xamarin.Android.Net.AndroidMessageHandler();
-        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-        {
-            if (cert != null && cert.Issuer.Equals("CN=localhost"))
-                return true;
-            return errors == System.Net.Security.SslPolicyErrors.None;
-        };
-        return handler;
+            var handler = new Xamarin.Android.Net.AndroidMessageHandler();
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            {
+                if (cert != null && cert.Issuer.Equals("CN=localhost"))
+                    return true;
+                return errors == System.Net.Security.SslPolicyErrors.None;
+            };
+            return handler;
 #elif IOS
-        var handler = new NSUrlSessionHandler
-        {
-            TrustOverrideForUrl = IsHttpsLocalhost
-        };
-        return handler;
+            var handler = new NSUrlSessionHandler
+            {
+                TrustOverrideForUrl = IsHttpsLocalhost
+            };
+            return handler;
 #else
             throw new PlatformNotSupportedException("Only Android and iOS supported.");
 #endif
         }
 
 #if IOS
-    public bool IsHttpsLocalhost(NSUrlSessionHandler sender, string url, Security.SecTrust trust)
-    {
-        if (url.StartsWith("https://localhost"))
-            return true;
-        return false;
-    }
+        public bool IsHttpsLocalhost(NSUrlSessionHandler sender, string url, Security.SecTrust trust)
+        {
+            if (url.StartsWith("https://localhost"))
+                return true;
+            return false;
+        }
 #endif
     }
 

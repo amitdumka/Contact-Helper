@@ -9,7 +9,7 @@ public class ActiveTabConverter : IValueConverter
         var target = (string)value;
         var tab = (string)parameter;
 
-        switch(tab)
+        switch (tab)
         {
             case "Home":
                 return (target == "Home") ? "tab_home_on.png" : "tab_home.png";

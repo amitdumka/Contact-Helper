@@ -9,15 +9,15 @@
 
         public static string RequestId { get; set; }
 
-        public static string ResonseData {  get; set; }
+        public static string ResonseData { get; set; }
 
     }
     public class TCallerAPI
     {
-        
+
         //public static bool SessionToJsonFile() { }
         //public static bool JsonFileToSession() { }
-        
+
         public static async Task<bool> DoLoginCheckAsync(string PhoneNumber)
         {
             var lc = await APIServer.LoginCheckAsync(PhoneNumber);
@@ -37,7 +37,7 @@
                 Preferences.Set("InstallId", SessionData.InstallId);
                 Preferences.Set("CCode", SessionData.CCode);
                 Preferences.Set("Status", SessionData.Status);
-                
+
 
                 return true;
 
@@ -49,7 +49,7 @@
         {
             return APIServer.SearchNumber(PhoneNumber, name, email, raw);
         }
-        public static Task<SearchByName> SearchNumberByName(string PhoneNumber,bool raw)
+        public static Task<SearchByName> SearchNumberByName(string PhoneNumber, bool raw)
         {
             return APIServer.SearchNumberByName(PhoneNumber, true, false, raw);
         }
@@ -92,7 +92,8 @@
                     Notify.NotifyVLong($"Otp is verifed and logged in, {ld.Status}");
                     return true;
 
-                }else return false;
+                }
+                else return false;
             }
             else return false;
         }
