@@ -47,3 +47,25 @@
         </Grid>
     </local:BasePage.Content>
 </local:BasePage>
+
+<!--<CollectionView ItemsSource="{Binding ListOfContacts}">
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <HorizontalStackLayout Spacing="10" Margin="10">
+                <sfAvatar:SfAvatarView ContentType="Initials"
+                                               InitialsType="DoubleCharacter"
+                                               AvatarName="{Binding Name}"                   
+                                               WidthRequest="50"
+                                               AvatarColorMode="LightBackground"
+                                               HeightRequest="50"
+                                               CornerRadius="25">
+                </sfAvatar:SfAvatarView>
+                <Label Text="{Binding Name}"
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center" 
+                               VerticalTextAlignment="Center"/>
+            </HorizontalStackLayout>
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>-->
