@@ -4,7 +4,7 @@ namespace Contact_Helper
 {
     public static class Constants
     {
-        public const string DatabaseFilename = "ContantCleaner.db3";
+        public const string DatabaseFilename = "ContantCleanerWithContact.db3";
 
         public const SQLite.SQLiteOpenFlags Flags =
             // open the database in read/write mode
@@ -31,6 +31,22 @@ namespace Contact_Helper
         public string? TrueCallerName { get; set; }
         public string? Remarks { get; set; }
     }
+    public class AContact
+    {
+        public int Id { get; set; }
+        public string IDS { get; set; }
+        public string? MiddleName { get; set; }
+        public string? NamePrefix { get; set; }
+        public string? FamilyName { get; set; }
+        public string? GivenName { get; set; }
+        public string? NameSuffix { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? TrueCallerName { get; set; }
+        public string? Status { get; set; }
+    }
+
+
 
     public class DBClass
     {
@@ -48,6 +64,7 @@ namespace Contact_Helper
 
             Database = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
             var result = await Database.CreateTableAsync<ContactModel>();
+            var result2 = await Database.CreateTableAsync<AContact>();
         }
 
         public async Task<List<ContactModel>> GetItemsAsync()
@@ -73,6 +90,43 @@ namespace Contact_Helper
         }
 
         public async Task<int> DeleteItemAsync(ContactModel item)
+        {
+            await Init();
+            return await Database.DeleteAsync(item);
+        }
+
+
+        public async Task<List<AContact>> GetContactsAsync()
+        {
+            await Init();
+            return await Database.Table<AContact>().ToListAsync();
+        }
+
+
+        public async Task<AContact> GetContactAsync(string phonenumber)
+        {
+            await Init();
+            return await Database.Table<AContact>().Where(i => i.Phone == phonenumber).FirstOrDefaultAsync();
+        }
+
+        public async Task<int> SaveContactAsync(AContact item)
+        {
+            await Init();
+            if (item.Id != 0)
+                return await Database.UpdateAsync(item);
+            else
+                return await Database.InsertAsync(item);
+        }
+        public async Task<int> UpdateContactAsync(AContact item)
+        {
+            await Init();
+            // if (item.Id != 0)
+            return await Database.UpdateAsync(item);
+            // else
+            //return await Database.InsertAsync(item);
+        }
+
+        public async Task<int> DeleteContactAsync(AContact item)
         {
             await Init();
             return await Database.DeleteAsync(item);

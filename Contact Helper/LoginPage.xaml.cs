@@ -31,8 +31,8 @@ namespace Contact_Helper
             SessionData.ResonseData = Preferences.Get("ResonseData", "");
             if (SessionData.PhoneNumber != null && SessionData.Status != null && SessionData.Status == "LoggedIn")
             {
-                //App.Current.MainPage= new MainPage();
-                App.Current.MainPage = new MainPage();
+                //App.Current.MainPage= new AppShell();
+                App.Current.MainPage = new AppShell();
             }
         }
     }
@@ -126,7 +126,7 @@ namespace Contact_Helper
                     {
                         Notify.NotifyVShort(" Already LoggedIn");
                         //TODO: Move to Search Page
-                        App.Current.MainPage = new MainPage();
+                        App.Current.MainPage = new AppShell();
                     }
 
                     else
@@ -166,7 +166,7 @@ namespace Contact_Helper
 
                     if (result)
                     {
-                        App.Current.MainPage = new MainPage();
+                        App.Current.MainPage = new AppShell();
                     }
                     else Notify.NotifyVShort("Error, Occured! or OTP is incorrect!");
 

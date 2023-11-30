@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<local:BasePage
+    x:Class="Contact_Helper.Contacts.ContactListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Contact_Helper.Contacts"
+    BackgroundColor="LightBlue"
+    Title="Contact List">
+    <local:BasePage.BindingContext>
+        <local:ContactsViewModel />
+    </local:BasePage.BindingContext>
+
+    <local:BasePage.Content>
+        <Grid RowDefinitions="Auto,Auto,*">
+            <Label
+                Margin="12"
+                FontAttributes="Bold"
+                Text="Contact List"
+                TextColor="DarkBlue" />
+            <ScrollView Grid.Row="1" Orientation="Horizontal">
+                <HorizontalStackLayout
+                    HorizontalOptions="Start"
+                    Padding="12,0,12,12"
+                    Spacing="6">
+                    <Button Command="{Binding GetContactCommand}" Text="Select" />
+                    <Button Command="{Binding GetAllContactCommand}" Text="All Contacts" />
+                    <Button Command="{Binding SaveToDataBaseCommand}" Text="Save" />
+                    <Button Command="{Binding DuplicateContactCommand}" Text="Duplicate" />
+                    <Button Command="{Binding FromDatabaseCommand}" Text="From DB" />
+                    
+                </HorizontalStackLayout>
+            </ScrollView>
+            <ListView
+                Grid.Row="2"
+                ItemsSource="{Binding ContactsList}"
+                SelectedItem="{Binding SelectedContact}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell
+                            Detail="{Binding Phones[0]}"
+                            DetailColor="Blue"
+                            Text="{Binding DisplayName}"
+                            TextColor="DarkGreen" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </local:BasePage.Content>
+</local:BasePage>

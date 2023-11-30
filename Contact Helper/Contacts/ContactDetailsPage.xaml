@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<local:BasePage
+    x:Class="Contact_Helper.Contacts.ContactDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Contact_Helper.Contacts"
+    BackgroundColor="LightBlue"
+    Title="Contact">
+
+    <local:BasePage.Content>
+        <ScrollView>
+            <Grid RowDefinitions="Auto,Auto">
+                <Label
+                    Margin="12"
+                    FontAttributes="Bold"
+                    Text="Contact Detail"
+                    TextColor="DarkBlue" />
+
+                <Grid
+                    Grid.Row="1"
+                    ColumnDefinitions="Auto,*"
+                    Padding="12,0,12,12"
+                    RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Id:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Text="{Binding Contact.Id}"
+                        TextColor="DarkGreen" />
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="DisplayName:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Text="{Binding Contact.DisplayName}"
+                        TextColor="DarkGreen" />
+
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Prefix:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Text="{Binding Contact.NamePrefix}"
+                        TextColor="DarkGreen" />
+
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="First Name:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Text="{Binding Contact.GivenName}"
+                        TextColor="DarkGreen" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Middle Name:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Text="{Binding Contact.MiddleName}"
+                        TextColor="DarkGreen" />
+                    <Label
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Last Name:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Text="{Binding Contact.FamilyName}"
+                        TextColor="DarkGreen" />
+                    <Label
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Suffix:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Text="{Binding Contact.NameSuffix}"
+                        TextColor="DarkGreen" />
+
+                    <Label
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Numbers:"
+                        TextColor="Blue" />
+                    <StackLayout
+                        Grid.Row="8"
+                        Grid.Column="0"
+                        BindableLayout.ItemsSource="{Binding Contact.Phones}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding PhoneNumber}" TextColor="Fuchsia" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+
+                                </Label>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <Label
+                        Grid.Row="9"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Emails:"
+                        TextColor="Blue" />
+                    <StackLayout
+                        Grid.Row="10"
+                        Grid.Column="0"
+                        BindableLayout.ItemsSource="{Binding Contact.Emails}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding EmailAddress}" TextColor="DarkMagenta" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+
+                    <!--<Label
+                        Grid.Row="11"
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        Text="Text:"
+                        TextColor="Blue" />
+                    <Label
+                        Grid.Row="11"
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        Text="{Binding Contact.Phones}"
+                        TextColor="DarkGreen" />-->
+                </Grid>
+            </Grid>
+        </ScrollView>
+    </local:BasePage.Content>
+</local:BasePage>

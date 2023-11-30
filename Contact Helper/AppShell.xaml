@@ -4,11 +4,20 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Contact_Helper"
-    Shell.FlyoutBehavior="Disabled">
+    xmlns:cont="clr-namespace:Contact_Helper.Contacts"
+    Shell.FlyoutBehavior="Flyout">
 
+    <ShellContent
+     Title="Contact"
+     ContentTemplate="{DataTemplate cont:ContactListPage}"
+     Route="Contact Page" />
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    <ShellContent
+    Title="True Caller Login"
+    ContentTemplate="{DataTemplate local:LoginPage}"
+    Route="LoginPage" />
 
 </Shell>
