@@ -9,7 +9,48 @@
     <local:BasePage.BindingContext>
         <local:ContactsViewModel />
     </local:BasePage.BindingContext>
-
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding GetContactCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Select" />
+        <ToolbarItem
+            Command="{Binding GetAllContactCommand}"
+            IconImageSource="add.png"
+            Order="Primary"
+            Text="Contact" />
+        <ToolbarItem
+            Command="{Binding DuplicateContactCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Duplicate" />
+        <ToolbarItem
+            Command="{Binding RemoveDuplicateCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Remove" />
+        <ToolbarItem
+            Command="{Binding FromDatabaseCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="From Db" />
+        <ToolbarItem
+            Command="{Binding TrueCallerUpdateCommand}"
+            IconImageSource="add.png"
+            Order="Primary"
+            Text="TC" />
+        <ToolbarItem
+            Command="{Binding ContactCleanerCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Clean" />
+        <ToolbarItem
+            Command="{Binding SaveToDataBaseCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Save" />
+    </ContentPage.ToolbarItems>
     <local:BasePage.Content>
         <Grid RowDefinitions="Auto,Auto,*">
             <Label
@@ -17,31 +58,47 @@
                 FontAttributes="Bold"
                 Text="Contact List"
                 TextColor="DarkBlue" />
-            <ScrollView Grid.Row="1" Orientation="Horizontal">
-                <HorizontalStackLayout
-                    HorizontalOptions="Start"
-                    Padding="12,0,12,12"
-                    Spacing="6">
-                    <Button Command="{Binding GetContactCommand}" Text="Select" />
-                    <Button Command="{Binding GetAllContactCommand}" Text="All Contacts" />
-                    <Button Command="{Binding SaveToDataBaseCommand}" Text="Save" />
-                    <Button Command="{Binding DuplicateContactCommand}" Text="Duplicate" />
-                    <Button Command="{Binding FromDatabaseCommand}" Text="From DB" />
-                    <Button Command="{Binding TrueCallerUpdateCommand}" Text="TrueCaller" />
 
-                </HorizontalStackLayout>
-            </ScrollView>
-            <ListView
+            <ListView SeparatorColor="Blue"
                 Grid.Row="2"
                 ItemsSource="{Binding ContactsList}"
                 SelectedItem="{Binding SelectedContact}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell
-                            Detail="{Binding Phones[0]}"
-                            DetailColor="Blue"
-                            Text="{Binding DisplayName}"
-                            TextColor="DarkGreen" />
+                        <ViewCell>
+
+                            <Grid Padding="-1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Grid.Column="0"
+                                    Grid.RowSpan="2"
+                                    WidthRequest="150"
+                                    HeightRequest="60"
+                                    FontAttributes="Bold"
+                                    Margin="2,2,2,2"
+                                    HorizontalTextAlignment="Start"
+                                    Text="{Binding DisplayName}"
+                                    TextColor="DarkGreen" />
+
+                                <Label
+                                    Margin="25,2,2,2"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    FontAttributes="Italic"
+                                    HorizontalOptions="End"
+                                   VerticalOptions="Start"
+                                    Text="{Binding Phones[0]}"
+                                    TextColor="DarkBlue" />
+                            </Grid>
+
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

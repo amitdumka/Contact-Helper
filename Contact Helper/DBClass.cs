@@ -34,7 +34,7 @@ namespace Contact_Helper
     }
     public class AContact
     {
-        [Key]
+        [PrimaryKey]
         public int Id { get; set; }
         public string IDS { get; set; }
         public string? MiddleName { get; set; }
@@ -114,16 +114,17 @@ namespace Contact_Helper
         public async Task<int> SaveContactAsync(AContact item)
         {
             await Init();
-            if (item.Id != 0)
-                return await Database.UpdateAsync(item);
-            else
+           // if (item.Id != 0)
+             //   return await Database.UpdateAsync(item);
+           // else
                 return await Database.InsertAsync(item);
         }
         public async Task<int> UpdateContactAsync(AContact item)
         {
             await Init();
-            // if (item.Id != 0)
-            return await Database.UpdateAsync(item);
+            if (item.Id != 0)
+                return await Database.UpdateAsync(item);
+            else return -1;
             // else
             //return await Database.InsertAsync(item);
         }

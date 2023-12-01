@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using static Android.Content.ClipData;
 using ContactsManager = Microsoft.Maui.ApplicationModel.Communication.Contacts;
 
 namespace Contact_Helper.Contacts
@@ -190,10 +189,17 @@ namespace Contact_Helper.Contacts
 
                 foreach (var item in x)
                 {
-                    ContactsList.Add(new Contact { FamilyName=item.FamilyName, GivenName=item.GivenName, 
-                        Phones= new List<ContactPhone> { new ContactPhone { PhoneNumber=item.Phone } },
-                        Emails= new List<ContactEmail> { new ContactEmail {EmailAddress=item.Email } },
-                        Id=item.IDS, MiddleName=item.MiddleName, NamePrefix=item.NamePrefix, NameSuffix=item.NameSuffix });
+                    ContactsList.Add(new Contact
+                    {
+                        FamilyName = item.FamilyName,
+                        GivenName = item.GivenName,
+                        Phones = new List<ContactPhone> { new ContactPhone { PhoneNumber = item.Phone } },
+                        Emails = new List<ContactEmail> { new ContactEmail { EmailAddress = item.Email } },
+                        Id = item.IDS,
+                        MiddleName = item.MiddleName,
+                        NamePrefix = item.NamePrefix,
+                        NameSuffix = item.NameSuffix
+                    });
                 }
             }
             catch (Exception ex)
@@ -206,6 +212,56 @@ namespace Contact_Helper.Contacts
             }
 
         }
+
+        [RelayCommand]
+        async Task RemoveDuplicate()
+        {
+            int count = 0;
+            if (IsBusy) return;
+            IsBusy = true;
+            try
+            {
+                var x = await db.GetContactsAsync();
+                var z = x.GroupBy(c => c.Phone).Where(x => x.Count() > 1).Select(x => new AContact
+                {
+                    GivenName = x.Select(c => c.GivenName).First(),
+                    MiddleName = x.Select(c => c.MiddleName).First(),
+                    Phone =x.Key,
+                    NameSuffix = x.Select(c => c.NameSuffix).First(),
+                    Email = x.Select(c => c.Email).First(),
+                    NamePrefix = x.Select(c => c.NamePrefix).First(),
+                    FamilyName = x.Select(c => c.FamilyName).First(),
+                    IDS = x.Select(c => c.IDS).First(),
+                    Id = x.Select(c => c.Id).First()
+                }).ToList();
+
+                foreach (var c in z)
+                {
+                    var ccs = x.Where(c => c.Phone == c.Phone).ToList();
+                    int ctr = 0;
+                    foreach (var item in ccs)
+                    {
+                        if (ctr > 0)
+                        {
+                           count+= await db.DeleteContactAsync(item);
+                        }
+                        ctr++;
+                    }
+                }
+                Notify.NotifyVLong($"Remove total {count} contacts");
+
+            }
+            catch (Exception ex)
+            {
+                Notify.NotifyVLong($"Error:{ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+
         [RelayCommand]
         async Task DuplicateContact()
         {
@@ -220,7 +276,7 @@ namespace Contact_Helper.Contacts
                     MiddleName = x.Select(c => c.MiddleName).First(),
                     Phones = new List<ContactPhone> { new ContactPhone { PhoneNumber = x.Key } },
                     NameSuffix = x.Select(c => c.NameSuffix).First(),
-                    Emails = new List<ContactEmail> { new ContactEmail { EmailAddress= x.Select(c => c.Email).First() } },
+                    Emails = new List<ContactEmail> { new ContactEmail { EmailAddress = x.Select(c => c.Email).First() } },
                     NamePrefix = x.Select(c => c.NamePrefix).First(),
                     FamilyName = x.Select(c => c.FamilyName).First(),
                     Id = x.Select(c => c.IDS).First()
@@ -249,7 +305,7 @@ namespace Contact_Helper.Contacts
                 await GetAllContacts();
             }
 
-            int Count = 0,Saved=0;
+            int Count = 0, Saved = 0;
             foreach (var contact in ContactsList)
             {
                 // List<Contact> newcc = new List<Contact>();
@@ -257,7 +313,7 @@ namespace Contact_Helper.Contacts
                 if (contact.Phones != null)
                 {
                     int ctr = 0;
-                    
+
                     foreach (var phone in contact.Phones)
                     {
                         var cc = new AContact
@@ -268,12 +324,13 @@ namespace Contact_Helper.Contacts
                             GivenName = contact.GivenName,
                             IDS = contact.Id,
                             NameSuffix = contact.NameSuffix,
-                            Phone =  phone.PhoneNumber,
-                            Email= contact.Emails!=null && contact.Emails.Any() ? contact.Emails[0].EmailAddress:""
-                            , Id=++ctr+Count,
+                            Phone = phone.PhoneNumber,
+                            Email = contact.Emails != null && contact.Emails.Any() ? contact.Emails[0].EmailAddress : ""
+                            ,
+                            Id = ++ctr + Count,
                         };
                         // newcc.Add(cc);
-                       Saved+=await db.SaveContactAsync(cc); Count++;
+                        Saved += await db.SaveContactAsync(cc); Count++;
 
                     }
                 }
@@ -284,9 +341,9 @@ namespace Contact_Helper.Contacts
         [RelayCommand]
         async Task TrueCallerUpdate()
         {
-            var fromDb = await db.GetContactsAsync(); 
-            var filter= fromDb.Where(c=>c.Status!="OK").ToList();
-            int count=0,Save=0,ok=0;
+            var fromDb = await db.GetContactsAsync();
+            var filter = fromDb.Where(c => c.Status != "OK").ToList();
+            int count = 0, Save = 0, ok = 0;
             foreach (var contact in filter)
             {
                 if (contact.Phone.Length >= 10)
@@ -324,5 +381,75 @@ namespace Contact_Helper.Contacts
             else Notify.NotifyShort("Update as much we can Total update are " + Save);
             return;
         }
+
+        [RelayCommand]
+        async Task ContactCleaner()
+        {
+            var contacts = await db.GetContactsAsync();
+            ContactsList.Clear();
+
+            if (contacts != null && contacts.Count > 0)
+            {
+                foreach (var contact in contacts)
+                {
+                    if (contact.Phone.Length < 9)
+                    {
+                        contact.Status = "REMOVE";
+                        contact.NameSuffix = "Remove";
+                    }
+                    else
+                    {
+                        contact.Phone = contact.Phone.Trim();
+                        contact.Phone = contact.Phone.TrimStart('0');
+                        contact.Phone = contact.Phone.TrimStart('.');
+                        contact.Phone = contact.Phone.TrimStart(',');
+                        contact.Phone = contact.Phone.Replace(" ", "");
+                        contact.Phone = contact.Phone.Replace("-", "");
+                        contact.Phone = contact.Phone.Replace("++", "+");
+
+
+                        if (contact.Phone.StartsWith("091") && contact.Phone.Length > 11)
+                        {
+                            contact.Phone = contact.Phone.Replace("091", "+91");
+                        }
+                        if (contact.Phone.StartsWith("91") && contact.Phone.Length > 11)
+                        {
+                            contact.Phone = "+" + contact.Phone;
+                        }
+                        if (contact.Phone.Length > 10 && contact.Phone.StartsWith("0"))
+                        { 
+                            contact.Phone = contact.Phone.Remove(1, 1); 
+                        }
+
+                        if (contact.Phone.Length > 10 && contact.Phone.StartsWith("00"))
+                        {
+                            contact.Phone = contact.Phone.Remove(1, 2);
+                            contact.Phone = "+" + contact.Phone;
+                        }
+
+
+                        if (contact.Phone.Length == 10)
+                        {
+                            contact.Phone = string.Concat("+91", contact.Phone);
+                        }
+                    }
+
+                    await db.UpdateContactAsync(contact);
+                    ContactsList.Add(new Contact
+                    {
+                        FamilyName = contact.FamilyName,
+                        GivenName = contact.GivenName,
+                        Phones = new List<ContactPhone> { new ContactPhone { PhoneNumber = contact.Phone } },
+                        Emails = new List<ContactEmail> { new ContactEmail { EmailAddress = contact.Email } },
+                        Id = contact.IDS,
+                        MiddleName = contact.TrueCallerName,
+                        NamePrefix = contact.NamePrefix,
+                        NameSuffix = contact.NameSuffix
+                    });
+
+                }
+            }
+        }
+
     }
 }
