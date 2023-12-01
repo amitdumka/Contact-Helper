@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using static Android.Content.ClipData;
 using ContactsManager = Microsoft.Maui.ApplicationModel.Communication.Contacts;
 
 namespace Contact_Helper.Contacts
@@ -269,6 +270,7 @@ namespace Contact_Helper.Contacts
                             NameSuffix = contact.NameSuffix,
                             Phone =  phone.PhoneNumber,
                             Email= contact.Emails!=null && contact.Emails.Any() ? contact.Emails[0].EmailAddress:""
+                            , Id=++ctr+Count,
                         };
                         // newcc.Add(cc);
                        Saved+=await db.SaveContactAsync(cc); Count++;
@@ -277,6 +279,50 @@ namespace Contact_Helper.Contacts
                 }
             }
             Notify.NotifyVShort($"Save Contact {Count} from {ContactsList.Count}.");
+        }
+
+        [RelayCommand]
+        async Task TrueCallerUpdate()
+        {
+            var fromDb = await db.GetContactsAsync(); 
+            var filter= fromDb.Where(c=>c.Status!="OK").ToList();
+            int count=0,Save=0,ok=0;
+            foreach (var contact in filter)
+            {
+                if (contact.Phone.Length >= 10)
+                {
+                    var name = await TCallerAPI.SearchNumberByName(contact.Phone, true);
+                    if (name != null && name.Status == "Ok")
+                    {
+                        contact.TrueCallerName = name.Name;
+                        contact.Status = "OK";
+                        Notify.NotifyShort(name.Name);
+                        Save += await db.UpdateContactAsync(contact);
+                        ok++;
+                        ContactsList.Add(new Contact
+                        {
+                            FamilyName = contact.FamilyName,
+                            GivenName = contact.GivenName,
+                            Phones = new List<ContactPhone> { new ContactPhone { PhoneNumber = contact.Phone } },
+                            Emails = new List<ContactEmail> { new ContactEmail { EmailAddress = contact.Email } },
+                            Id = contact.IDS,
+                            MiddleName = contact.TrueCallerName,
+                            NamePrefix = contact.NamePrefix,
+                            NameSuffix = contact.NameSuffix
+                        });
+                        await Task.Delay(5000);
+
+                    }
+                    else
+                    {
+                        count++;
+                        if (count > 20) return;
+                    }
+                }
+            }
+            if (Save != ok) Notify.NotifyVLong("Error number not matched");
+            else Notify.NotifyShort("Update as much we can Total update are " + Save);
+            return;
         }
     }
 }

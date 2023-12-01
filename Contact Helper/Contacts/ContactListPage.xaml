@@ -27,7 +27,8 @@
                     <Button Command="{Binding SaveToDataBaseCommand}" Text="Save" />
                     <Button Command="{Binding DuplicateContactCommand}" Text="Duplicate" />
                     <Button Command="{Binding FromDatabaseCommand}" Text="From DB" />
-                    
+                    <Button Command="{Binding TrueCallerUpdateCommand}" Text="TrueCaller" />
+
                 </HorizontalStackLayout>
             </ScrollView>
             <ListView

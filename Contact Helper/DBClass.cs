@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System.ComponentModel.DataAnnotations;
 
 namespace Contact_Helper
 {
@@ -33,6 +34,7 @@ namespace Contact_Helper
     }
     public class AContact
     {
+        [Key]
         public int Id { get; set; }
         public string IDS { get; set; }
         public string? MiddleName { get; set; }
