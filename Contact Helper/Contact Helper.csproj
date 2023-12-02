@@ -64,9 +64,10 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Core" Version="6.0.0" />
+		<PackageReference Include="MixERP.Net.VCards" Version="1.0.7" />
 
 		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
+		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.7" />
 		<PackageReference Include="Syncfusion.DocIO.NET" Version="23.1.43" />
 		<PackageReference Include="Syncfusion.Maui.Backdrop" Version="23.1.43" />
 		<PackageReference Include="Syncfusion.Maui.Barcode" Version="23.1.43" />
@@ -86,6 +87,9 @@
 		<PackageReference Include="Syncfusion.Maui.TabView" Version="23.1.43" />
 		<PackageReference Include="Syncfusion.Maui.TreeView" Version="23.1.43" />
 		<PackageReference Include="Syncfusion.XlsIO.NET" Version="23.2.6" />
+		<PackageReference Include="Thought.vCards" Version="1.0.9" />
+		<PackageReference Include="Thought.vCards.Core" Version="1.0.0" />
+		<PackageReference Include="VCards" Version="1.0.0" />
 		<!--<PackageReference Include="Telerik.UI.for.Maui.Trial" Version="6.3.0" />-->
 
 	</ItemGroup>

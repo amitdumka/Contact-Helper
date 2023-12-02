@@ -141,7 +141,9 @@ namespace Contact_Helper.Contacts
             ContactsList.Clear();
             try
             {
+                
                 var contacts = await ContactsManager.GetAllAsync();
+                
 
                 await Task.Run(
                     () =>
