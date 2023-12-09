@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Contact_Helper.VCF.ContactPage"
+             xmlns:vcf="clr-namespace:Contact_Helper.VCF"
+             xmlns:base="clr-namespace:Contact_Helper.Bases"
+             Title="Contacts">
+    <base:BasePage.BindingContext>
+        <vcf:VcfHelper x:Name="viewModel"/>
+    </base:BasePage.BindingContext>
+    <ContentPage.ToolbarItems>
+
+        <ToolbarItem
+ Command="{Binding GetAllContactCommand}"
+ IconImageSource="add.png"
+ Order="Primary"
+ Text="Contact" />
+
+        <ToolbarItem
+        Command="{Binding GetContactCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="Select" />
+
+        <!--<ToolbarItem
+        Command="{Binding DuplicateContactCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="Duplicate" />
+        <ToolbarItem
+        Command="{Binding RemoveDuplicateCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="Remove" />
+        <ToolbarItem
+        Command="{Binding FromDatabaseCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="From Db" />
+        <ToolbarItem
+        Command="{Binding TrueCallerUpdateCommand}"
+        IconImageSource="add.png"
+        Order="Primary"
+        Text="TC" />
+        <ToolbarItem
+        Command="{Binding ContactCleanerCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="Clean" />
+        <ToolbarItem
+        Command="{Binding SaveToDataBaseCommand}"
+        IconImageSource="add.png"
+        Order="Secondary"
+        Text="Save" />-->
+    </ContentPage.ToolbarItems>
+    <base:BasePage.Content>
+        <ScrollView>
+            <Grid RowDefinitions="Auto,Auto,*">
+                <Label
+         Margin="12"
+         FontAttributes="Bold"
+         Text="Contact List"
+         TextColor="DarkBlue" />
+
+                <ListView SeparatorColor="Blue" x:Name="CListView"
+         Grid.Row="2"
+         ItemsSource="{Binding ContactsList}"
+         SelectedItem="{Binding SelectedContact}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+
+                                <Grid Padding="-1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label
+                             Grid.Column="0"
+                             Grid.RowSpan="2"
+                             WidthRequest="150"
+                             HeightRequest="60"
+                             FontAttributes="Bold"
+                             Margin="2,2,2,2"
+                             HorizontalTextAlignment="Start"
+                             Text="{Binding DisplayName}"
+                             TextColor="DarkGreen" />
+
+                                    <Label
+                             Margin="25,2,2,2"
+                             Grid.Row="0"
+                             Grid.Column="1"
+                             FontAttributes="Italic"
+                             HorizontalOptions="End"
+                            VerticalOptions="Start"
+                             Text="{Binding Phones[0]}"
+                             TextColor="DarkBlue" />
+                                </Grid>
+
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </ScrollView>
+    </base:BasePage.Content>
+</base:BasePage>

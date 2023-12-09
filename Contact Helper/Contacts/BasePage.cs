@@ -1,4 +1,4 @@
-﻿namespace Contact_Helper.Contacts
+﻿namespace Contact_Helper.Bases
 {
     public class BasePage : ContentPage
     {

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Communication = Microsoft.Maui.ApplicationModel.Communication;
 
-namespace Contact_Helper.Contacts
+namespace Contact_Helper
 {
     
     internal class ContactManager

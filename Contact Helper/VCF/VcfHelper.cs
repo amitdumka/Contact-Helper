@@ -1,25 +1,45 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MixERP.Net.VCards.Serializer;
-using Network;
+using Contact_Helper.Bases;
+using Contact_Helper.Contacts;
 using System.Collections.ObjectModel;
-
+using ContactsManager = Microsoft.Maui.ApplicationModel.Communication.Contacts;
 using VCard = MixERP.Net.VCards.VCard;
 
-namespace Contact_Helper
+namespace Contact_Helper.VCF
 {
-    internal partial class VcfHelper : ObservableObject
+
+
+    internal partial class VcfHelper : BaseViewModel
     {
         [ObservableProperty]
+        ListView _contactListView;
+
+        [ObservableProperty]
         private ObservableCollection<VCard> _vCards;
+
         [ObservableProperty]
         private ObservableCollection<AksContact> _contacts;
+
         [ObservableProperty]
         private ObservableCollection<ContactExt> _contactExts;
         [ObservableProperty]
         private string _fileName;
-        public static AppContext _db = new AppContext();
-        private string CleanPhoneNumber(string phoneNumber)
+
+        [ObservableProperty]
+        Contact selectedContact;
+
+        [ObservableProperty]
+        public ObservableCollection<Contact> contactsList;
+
+        public VcfHelper()
+        {
+            //OnGetAllContact();
+        }
+
+        public static AppContext _db;//= new AppContext();
+
+        private static string CleanPhoneNumber(string phoneNumber)
         {
             phoneNumber = phoneNumber.Trim();
             phoneNumber = phoneNumber.TrimStart('0');
@@ -62,7 +82,7 @@ namespace Contact_Helper
             {
                 var c = cont.ToContactExt();
                 ContactExts.Add(c);
-                _db.ContactExts.Add(c);
+                //_db.ContactExts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -75,7 +95,7 @@ namespace Contact_Helper
             {
                 var c = cont.ToAKSContact();
                 Contacts.Add(c);
-                _db.Contacts.Add(c);
+                //_db.Contacts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -89,7 +109,7 @@ namespace Contact_Helper
                 var c = cont.ToAKSContactClean();
                 Contacts.Add(c);
                 c.Id = 0;
-                _db.Contacts.Add(c);
+                //_db.Contacts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -100,11 +120,11 @@ namespace Contact_Helper
         {
             if (Contacts == null && Contacts.Count <= 0)
             {
-                var x = _db.Contacts.ToList();
-                foreach (var item in x)
-                {
-                    Contacts.Add(item);
-                }
+                //var x = _db.Contacts.ToList();
+                //foreach (var item in x)
+                //{
+                //    Contacts.Add(item);
+                //}
 
 
             }
@@ -141,7 +161,7 @@ namespace Contact_Helper
             cleanC = cleanC.DistinctBy(c => c.Phone).ToList();
             cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
             _db.AContacts.AddRange(cleanA);
-            _db.Contacts.AddRange(cleanC);
+           // _db.Contacts.AddRange(cleanC);
             var count = await _db.SaveChangesAsync();
             if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
 
@@ -178,144 +198,41 @@ namespace Contact_Helper
             Notify.NotifyShort($"Read {VCards.Count}  contacts");
         }
 
-    }
-    internal partial class VcfHelper2 : ObservableObject
-    {
-        [ObservableProperty]
-        private ObservableCollection<VCard> _vCards;
-
         [RelayCommand]
-        private async Task BreakContacts()
+        async Task OnGetAllContact()
         {
-            foreach (var vcard in VCards)
+            //if (await Permissions.RequestAsync<Permissions.ContactsRead>() != PermissionStatus.Granted)
+            //  return;
+
+            if (IsBusy)
+                return;
+            IsBusy = true;
+            if (ContactsList == null) ContactsList = new ObservableCollection<Contact>();
+            else
+                ContactsList.Clear();
+            try
             {
-                List<string> phones = vcard.Telephones.Select(c => c.Number).ToList();
-                List<string> emails = vcard.Emails.Select(c => c.EmailAddress).ToList();
-                // Create Contact for each Phone and check for Duplicate here and clean also  and join emails, seperate by ;
-                string emailid = "";
-                foreach (var email in emails) emailid += email + ";";
 
-                foreach (var ph in phones)
-                {
-                    var phone = CleanPhoneNumber(ph);
+                var contacts = await ContactsManager.GetAllAsync();
 
-                    AContact ac = new AContact
+
+                await Task.Run(
+                    () =>
                     {
-                        Email = emailid,
-                        GivenName = vcard.FirstName,
-                        FamilyName = vcard.LastName,
-                        MiddleName = vcard.MiddleName,
-                        NamePrefix = vcard.Prefix,
-                        NameSuffix = vcard.Suffix,
-                        Phone = phone,
-                        Status = "#",
-                        TrueCallerName = "",
-                    };
-                }
+                        foreach (var contact in contacts)
+                        {
+                            MainThread.BeginInvokeOnMainThread(() => ContactsList.Add(contact));
+                        }
+                    });
             }
-        }
-
-        [RelayCommand]
-        private async Task CleanContact()
-        { }
-
-        private string CleanPhoneNumber(string phoneNumber)
-        {
-            phoneNumber = phoneNumber.Trim();
-            phoneNumber = phoneNumber.TrimStart('0');
-            phoneNumber = phoneNumber.TrimStart('.');
-            phoneNumber = phoneNumber.TrimStart(',');
-            phoneNumber = phoneNumber.Replace(" ", "");
-            phoneNumber = phoneNumber.Replace("-", "");
-            phoneNumber = phoneNumber.Replace("++", "+");
-
-            if (phoneNumber.StartsWith("091") && phoneNumber.Length > 11)
+            catch (Exception ex)
             {
-                phoneNumber = phoneNumber.Replace("091", "+91");
+                Notify.NotifyVLong($"Error:{ex.Message}");
             }
-            if (phoneNumber.StartsWith("91") && phoneNumber.Length > 11)
+            finally
             {
-                phoneNumber = "+" + phoneNumber;
+                IsBusy = false;
             }
-            if (phoneNumber.Length > 10 && phoneNumber.StartsWith("0"))
-            {
-                phoneNumber = phoneNumber.Remove(1, 1);
-            }
-
-            if (phoneNumber.Length > 10 && phoneNumber.StartsWith("00"))
-            {
-                phoneNumber = phoneNumber.Remove(1, 2);
-                phoneNumber = "+" + phoneNumber;
-            }
-
-            if (phoneNumber.Length == 10)
-            {
-                phoneNumber = string.Concat("+91", phoneNumber);
-            }
-            return phoneNumber;
-        }
-
-        [RelayCommand]
-        private async Task DBToVCard()
-        { }
-
-        [RelayCommand]
-        private async Task DeleteVCFFile(string filePath)
-        { }
-
-        [RelayCommand]
-        private async Task FindDuplicate()
-        {
-        }
-
-        [RelayCommand]
-        private async Task ReadVCFFile(string filePath)
-        {
-            IEnumerable<VCard> vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.Deserialize(filePath);
-            // string contents = File.ReadAllText(filePath, Encoding.UTF8);
-            // vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.GetVCards(contents);
-
-            foreach (var vcard in vcards)
-            {
-                var x = vcard.ToContactExt();
-                VCards.Add(vcard);
-            }
-            Notify.NotifyShort($"Read {VCards.Count}  contacts");
-        }
-
-        [RelayCommand]
-        private async Task RemoveDupilcate()
-        { }
-
-        [RelayCommand]
-        private async Task SaveToDB()
-        {
-        }
-
-        [RelayCommand]
-        private async Task SearchInTrueCaller()
-        { }
-
-        [RelayCommand]
-        private async Task WriteVCFFile(string filePath)
-        {
-            //var vcard = new VCard
-            //{
-            //    Version = VCardVersion.V4,
-            //    FormattedName = "John Doe",
-            //    FirstName = "John",
-            //    LastName = "Doe",
-            //    Classification = ClassificationType.Confidential,
-            //    Categories = new[] { "Friend", "Fella", "Amsterdam" },
-
-            //};
-
-            var cards = VCards.ToList();
-
-            string serialized = cards.Serialize();
-            // string serialized = vcard.Serialize();
-            // string path = Path.Combine(@"C:\", "JohnDoe.vcf");
-            File.WriteAllText(filePath, serialized);
         }
     }
 }

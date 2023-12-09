@@ -1,4 +1,6 @@
-﻿namespace Contact_Helper.Contacts
+﻿using Contact_Helper.Bases;
+
+namespace Contact_Helper.Contacts
 {
     public partial class ContactDetailsPage : BasePage
     {

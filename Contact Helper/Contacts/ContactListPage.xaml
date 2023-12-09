@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<local:BasePage
+<base:BasePage
     x:Class="Contact_Helper.Contacts.ContactListPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Contact_Helper.Contacts"
+    xmlns:base="clr-namespace:Contact_Helper.Bases"
     BackgroundColor="LightBlue"
     Title="Contact List">
-    <local:BasePage.BindingContext>
+    <base:BasePage.BindingContext>
         <local:ContactsViewModel />
-    </local:BasePage.BindingContext>
+    </base:BasePage.BindingContext>
     <ContentPage.ToolbarItems>
         <ToolbarItem
             Command="{Binding GetContactCommand}"
@@ -51,7 +52,7 @@
             Order="Secondary"
             Text="Save" />
     </ContentPage.ToolbarItems>
-    <local:BasePage.Content>
+    <base:BasePage.Content>
         <Grid RowDefinitions="Auto,Auto,*">
             <Label
                 Margin="12"
@@ -103,8 +104,8 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-    </local:BasePage.Content>
-</local:BasePage>
+    </base:BasePage.Content>
+</base:BasePage>
 
 <!--<CollectionView ItemsSource="{Binding ListOfContacts}">
     <CollectionView.ItemTemplate>

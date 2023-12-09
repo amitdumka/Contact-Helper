@@ -7,7 +7,7 @@ namespace Contact_Helper
 {
     public static class Constants
     {
-        public const string DatabaseFilename = "ContantCleanerWithContact.db3";
+        public const string DatabaseFilename = "ContantCleanerWithContact_1.db3";
 
         public const SQLite.SQLiteOpenFlags Flags =
             // open the database in read/write mode
@@ -177,7 +177,7 @@ namespace Contact_Helper
         {
             SQLitePCL.Batteries_V2.Init();
             Database.Migrate();
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -187,8 +187,8 @@ namespace Contact_Helper
         }
 
         public DbSet<AContact> AContacts { get; set; }
-        public DbSet<ContactExt> ContactExts { get; set; }
-        public DbSet<AksContact> Contacts { get; set; }
+      //  public DbSet<ContactExt> ContactExts { get; set; }
+        //public DbSet<AksContact> Contacts { get; set; }
 
     }
 
