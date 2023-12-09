@@ -28,29 +28,30 @@
                     SemanticProperties.HeadingLevel="Level2"
                     Text="FileName"
                     TextColor="Red" />
-                <Entry TextColor="Red"
+                <Entry
                     x:Name="fileEntry"
                     HorizontalOptions="Start"
                     Keyboard="Telephone"
-                    Placeholder="FileName" />
+                    Placeholder="FileName"
+                    TextColor="Red" />
                 <Button
                     x:Name="FileSelect"
-                    class="PrimaryButton"
                     Clicked="FileSelect_Clicked"
                     HorizontalOptions="Start"
-                    Text="Select File" />
+                    Text="Select File"
+                    class="PrimaryButton" />
                 <Button
                     x:Name="ExcelButton"
-                    class="PrimaryButton"
-                    Clicked ="ExcelButton_Clicked"
+                    Clicked="ExcelButton_Clicked"
                     HorizontalOptions="Start"
-                    Text="Load" />
+                    Text="Load"
+                    class="PrimaryButton" />
                 <Button
                     x:Name="SearchExcel"
-                    class="PrimaryButton"
-                    Clicked ="SearchExcel_Clicked"
+                    Clicked="SearchExcel_Clicked"
                     HorizontalOptions="Start"
-                    Text="Search From Excel" />
+                    Text="Search From Excel"
+                    class="PrimaryButton" />
             </VerticalStackLayout>
 
             <HorizontalStackLayout Padding="10">
@@ -106,10 +107,10 @@
 
             <Button
                 x:Name="searchButton"
-                class="PrimaryButton"
-                Clicked ="searchButton_Clicked"
+                Clicked="searchButton_Clicked"
                 HorizontalOptions="Center"
-                Text="Search" />
+                Text="Search"
+                class="PrimaryButton" />
 
             <Label
                 x:Name="treeView"
@@ -117,13 +118,27 @@
                 Text=""
                 TextColor="Red" />
 
-           
-            <VerticalStackLayout Padding="10" VerticalOptions="StartAndExpand" HorizontalOptions="StartAndExpand" MinimumHeightRequest="320" MinimumWidthRequest="320">
- <ScrollView>
-                <sfG:SfDataGrid BackgroundColor="Beige" HeaderGridLinesVisibility="Both" GridLinesVisibility="Both" x:Name="dataGrid" VerticalOptions="StartAndExpand"  VerticalScrollBarVisibility="Always" ItemsSource="{x:Binding Source=Contacts}"  MinimumHeightRequest="300" MinimumWidthRequest="300"/>
+
+            <VerticalStackLayout
+                Padding="10"
+                HorizontalOptions="StartAndExpand"
+                MinimumHeightRequest="320"
+                MinimumWidthRequest="320"
+                VerticalOptions="StartAndExpand">
+                <ScrollView>
+                    <sfG:SfDataGrid
+                        x:Name="dataGrid"
+                        BackgroundColor="Beige"
+                        GridLinesVisibility="Both"
+                        HeaderGridLinesVisibility="Both"
+                        ItemsSource="{x:Binding Source=Contacts}"
+                        MinimumHeightRequest="300"
+                        MinimumWidthRequest="300"
+                        VerticalOptions="StartAndExpand"
+                        VerticalScrollBarVisibility="Always" />
                 </ScrollView>
             </VerticalStackLayout>
-           
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

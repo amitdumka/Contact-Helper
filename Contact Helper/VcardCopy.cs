@@ -1,6 +1,5 @@
 ﻿using MixERP.Net.VCards.Models;
 using MixERP.Net.VCards.Types;
-using Syncfusion.Pdf.Parsing;
 using VCard = MixERP.Net.VCards.VCard;
 
 namespace Contact_Helper
@@ -67,10 +66,10 @@ namespace Contact_Helper
                 PhotoContent = ce.ContentsPhoto,
                 PhotoExt = ce.ExtensionPhoto,
                 Title = ce.Title,
-                Phone = ce.Telephone
+                Telephone = ce.Telephone
             };
 
-            var phones = x.Phone.Split(';').ToList();
+            var phones = x.Telephone.Split(';').ToList();
             var clean= new List<string>();
             foreach (var item in phones)
             {
@@ -80,7 +79,7 @@ namespace Contact_Helper
             clean=clean.Distinct().ToList();
             foreach (var item in clean)
             {
-                x.Phone += $"{item};";
+                x.Telephone += $"{item};";
             }
             x.Note += "#Cleaned";
             return x;
@@ -110,7 +109,7 @@ namespace Contact_Helper
                 PhotoContent = ce.ContentsPhoto,
                 PhotoExt = ce.ExtensionPhoto,
                 Title = ce.Title,
-                Phone = ce.Telephone
+                Telephone = ce.Telephone
             };
         }
 
@@ -149,7 +148,7 @@ namespace Contact_Helper
             }
             foreach (var item in card.Telephones)
             {
-                ceExt.Phone += item + ";";
+                ceExt.Telephone += item + ";";
             }
             foreach (var item in card.Emails)
             {

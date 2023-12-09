@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<base:BasePage
+    x:Class="Contact_Helper.VCF.ContactsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:base="clr-namespace:Contact_Helper.Bases"
+    xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+    xmlns:local="clr-namespace:Contact_Helper.VCF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Contacts Page"
+    BackgroundColor="LightBlue"
+    mc:Ignorable="d">
+
+    <base:BasePage.Content>
+        <Grid RowDefinitions="Auto,*">
+            <Border
+                Background="Transparent"
+                Stroke="Transparent"
+                StrokeThickness="0">
+                <Entry
+                    Margin="15,10,15,10"
+                    BackgroundColor="{StaticResource DarkGray}"
+                    FontSize="14"
+                    HeightRequest="35"
+                    Placeholder="Search contacts"
+                    PlaceholderColor="{StaticResource Accent_Blue200}"
+                    VerticalTextAlignment="Center" />
+            </Border>
+        </Grid>
+    </base:BasePage.Content>
+</base:BasePage>

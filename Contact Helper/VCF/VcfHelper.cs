@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Contact_Helper.Bases;
 using System.Collections.ObjectModel;
+using System.Text;
 using ContactsManager = Microsoft.Maui.ApplicationModel.Communication.Contacts;
 using VCard = MixERP.Net.VCards.VCard;
 
@@ -11,8 +12,21 @@ namespace Contact_Helper.VCF
 
     internal partial class VcfHelper : BaseViewModel
     {
+        /// <summary>
+        /// ContactList  using Contact Model from MAUI API
+        /// </summary>
         [ObservableProperty]
         ListView _contactListView;
+        /// <summary>
+        /// Contacts and ContactExt Model of Custom contact model
+        /// </summary>
+        [ObservableProperty]
+        ListView _contactListView2;
+        /// <summary>
+        /// VCards  using VCard model from VCF extension
+        /// </summary>
+        [ObservableProperty]
+        ListView _contactListView3;
 
         [ObservableProperty]
         private ObservableCollection<VCard> _vCards;
@@ -33,7 +47,12 @@ namespace Contact_Helper.VCF
 
         public VcfHelper()
         {
-            //OnGetAllContact();
+            //_db=appContext;
+           // OnGetAllContact();
+        }
+        public void SetDB(AppContext appContext)
+        {
+            _db = appContext;
         }
 
         public static AppContext _db;//= new AppContext();
@@ -81,7 +100,7 @@ namespace Contact_Helper.VCF
             {
                 var c = cont.ToContactExt();
                 ContactExts.Add(c);
-                //_db.ContactExts.Add(c);
+                _db.ContactExts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -94,7 +113,7 @@ namespace Contact_Helper.VCF
             {
                 var c = cont.ToAKSContact();
                 Contacts.Add(c);
-                //_db.Contacts.Add(c);
+                _db.Contacts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -108,7 +127,7 @@ namespace Contact_Helper.VCF
                 var c = cont.ToAKSContactClean();
                 Contacts.Add(c);
                 c.Id = 0;
-                //_db.Contacts.Add(c);
+                _db.Contacts.Add(c);
             }
 
             bool flag = await _db.SaveChangesAsync() > 0;
@@ -132,7 +151,7 @@ namespace Contact_Helper.VCF
             List<AContact> cleanA = new List<AContact>();
             foreach (var cont in Contacts)
             {
-                var phones = cont.Phone.Split(';');
+                var phones = cont.Telephone.Split(';');
 
                 foreach (var ph in phones)
                 {
@@ -151,43 +170,102 @@ namespace Contact_Helper.VCF
                         TrueCallerName = "",
                     };
                     var aks = cont;
-                    aks.Phone = phone;
+                    aks.Telephone = phone;
                     cleanA.Add(ac);
                     cleanC.Add(aks);
                 }
             }
 
-            cleanC = cleanC.DistinctBy(c => c.Phone).ToList();
+            cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
             cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
             _db.AContacts.AddRange(cleanA);
-           // _db.Contacts.AddRange(cleanC);
+            _db.Contacts.AddRange(cleanC);
             var count = await _db.SaveChangesAsync();
             if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
 
         }
         [RelayCommand]
-        private async Task ReadVCFFile(string filePath)
+        private async Task ReadVCFFile()
         {
-            if (!string.IsNullOrEmpty(filePath)) this.FileName = filePath;
-            IEnumerable<VCard> vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.Deserialize(FileName);
-            // string contents = File.ReadAllText(filePath, Encoding.UTF8);
-            // vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.GetVCards(contents);
+            //if (!string.IsNullOrEmpty(filePath)) this.FileName = filePath;
+            PickOptions options = new()
+            {
+                PickerTitle = "Please select a VCF file",
 
+            };
+            var result = await FilePicker.Default.PickAsync(options);
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("vcf", StringComparison.OrdinalIgnoreCase) || result.FileName.EndsWith("vcf", StringComparison.OrdinalIgnoreCase))
+                {
+                    FileName = result.FullPath;
+                }
+                else
+                {
+                    Notify.NotifyVShort($"{result.FileName} is not valid, select only Vcf File");
+                    return;
+                }
+            }
+            else
+            {
+                Notify.NotifyVShort($"Operation Cancled!");
+                return;
+            }
+
+            // IEnumerable<VCard> vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.Deserialize(FileName);
+            string contents = File.ReadAllText(FileName, Encoding.UTF8);
+            var vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.GetVCards(contents);
+            if (VCards == null) VCards = new ObservableCollection<VCard>();
+            else
+                VCards.Clear();
             foreach (var vcard in vcards)
             {
                 //var x = vcard.ToContactExt();
                 VCards.Add(vcard);
             }
             Notify.NotifyShort($"Read {VCards.Count}  contacts");
+            if (ContactListView3 != null)
+            {
+                ContactListView3.ItemsSource = VCards;
+                ContactListView3.IsVisible = true;
+                ContactListView.IsVisible = false;
+                ContactListView2.IsVisible = false;
+            }
         }
         [RelayCommand]
-        private async Task ReadVCFFileToContactExt(string filePath)
+        private async Task ReadVCFFileToContactExt()
         {
-            if (!string.IsNullOrEmpty(filePath)) this.FileName = filePath;
+            PickOptions options = new()
+            {
+                PickerTitle = "Please select a excel file",
+
+            };
+            var result = await FilePicker.Default.PickAsync(options);
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("vcf", StringComparison.OrdinalIgnoreCase) || result.FileName.EndsWith("vcf", StringComparison.OrdinalIgnoreCase))
+                {
+                    FileName = result.FullPath;
+                }
+                else
+                {
+                    Notify.NotifyVShort($"{result.FileName} is not valid, select only Vcf File");
+                    return;
+                }
+            }
+            else
+            {
+                Notify.NotifyVShort($"Operation Cancled!");
+                return;
+            }
             IEnumerable<VCard> vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.Deserialize(FileName);
             // string contents = File.ReadAllText(filePath, Encoding.UTF8);
             // vcards = (IEnumerable<VCard>)MixERP.Net.VCards.Deserializer.GetVCards(contents);
-
+            if (VCards == null) VCards = new ObservableCollection<VCard>();
+            else
+                VCards.Clear();
+            if(ContactExts == null) ContactExts= new ObservableCollection<ContactExt> ();
+            ContactExts.Clear();
             foreach (var vcard in vcards)
             {
                 var x = vcard.ToContactExt();
@@ -195,6 +273,13 @@ namespace Contact_Helper.VCF
                 ContactExts.Add(x);
             }
             Notify.NotifyShort($"Read {VCards.Count}  contacts");
+            if (ContactListView2 != null)
+            {
+                ContactListView2.ItemsSource = ContactExts;
+                ContactListView2.IsVisible = true;
+                ContactListView.IsVisible = false;
+                ContactListView3.IsVisible = false;
+            }
         }
 
         [RelayCommand]
@@ -223,6 +308,13 @@ namespace Contact_Helper.VCF
                             MainThread.BeginInvokeOnMainThread(() => ContactsList.Add(contact));
                         }
                     });
+                if (ContactListView != null)
+                {
+                    //ContactListView.ItemsSource = ContactListView;
+                    ContactListView.IsVisible = true;
+                    ContactListView2.IsVisible = false;
+                    ContactListView3.IsVisible = false;
+                }
             }
             catch (Exception ex)
             {

@@ -7,7 +7,7 @@ namespace Contact_Helper
 {
     public static class Constants
     {
-        public const string DatabaseFilename = "ContantCleanerWithContact_1.db3";
+        public const string DatabaseFilename = "ContantCleanerWithContact.db3";
 
         public const SQLite.SQLiteOpenFlags Flags =
             // open the database in read/write mode
@@ -19,6 +19,7 @@ namespace Contact_Helper
 
         public static string DatabasePath =>
             Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
+        public static string DbString = $"Filename={DatabasePath}";
     }
 
     public class ContactModel
@@ -60,8 +61,9 @@ namespace Contact_Helper
         public string MiddleName { get; set; }
         public string NamePrefix { get; set; }
         public string NameSuffix { get; set; }
+        public string FormattedName { get { return $"{Title}. {FirstName} {LastName}"; } }
         public string TrueCallerName { get; set; }
-        public string Phone { get; set; }
+        public string Telephone { get; set; }
         public string Email { get; set; }
         public string Note { get; set; }
         public DateTime? Birthdate { get; set; }
@@ -73,7 +75,7 @@ namespace Contact_Helper
         public double Longitude { get; set; }
         public string Organization { get; set; }
         public string OrganizationalUnit { get; set; }
-        public string Address {  get; set; }
+        public string Address { get; set; }
 
     }
 
@@ -176,19 +178,20 @@ namespace Contact_Helper
         public AppContext()
         {
             SQLitePCL.Batteries_V2.Init();
+            Database.EnsureCreated();
             Database.Migrate();
-            //Database.EnsureCreated();
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //string dbPath = Path.Combine(FileSystem.AppDataDirectory, "medbaseapplica.db3");
-            optionsBuilder.UseSqlite(Constants.DatabasePath);
+            optionsBuilder.UseSqlite(Constants.DbString);
         }
 
         public DbSet<AContact> AContacts { get; set; }
-      //  public DbSet<ContactExt> ContactExts { get; set; }
-        //public DbSet<AksContact> Contacts { get; set; }
+        public DbSet<ContactExt> ContactExts { get; set; }
+        public DbSet<AksContact> Contacts { get; set; }
 
     }
 
