@@ -18,11 +18,11 @@
             Order="Primary"
             Text="Contact" />
 
-        <ToolbarItem
+        <!--<ToolbarItem
             Command="{Binding GetContactCommand}"
             IconImageSource="add.png"
             Order="Secondary"
-            Text="Select" />
+            Text="Select" />-->
         <ToolbarItem
             Command="{Binding ReadVCFFileCommand}"
             IconImageSource="add.png"
@@ -33,37 +33,40 @@
             IconImageSource="add.png"
             Order="Secondary"
             Text="Read Vcf To ContactEx" />
+        <ToolbarItem
+            Command="{Binding BreakContactsCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Break Contact" />
+        <ToolbarItem
+            Command="{Binding ToContactCleanedCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Cleaned Contact" />
+        <ToolbarItem
+            Command="{Binding ToContactsCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="To Contacts" />
+        <ToolbarItem
+            Command="{Binding ToContactExtCommand}"
+            IconImageSource="add.png"
+            Order="Primary"
+            Text="To Cont Ext" />
+        <ToolbarItem
+            Command="{Binding DoubtFullContactsCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Doubtfull" />
 
-        <!--<ToolbarItem
-        Command="{Binding DuplicateContactCommand}"
-        IconImageSource="add.png"
-        Order="Secondary"
-        Text="Duplicate" />
         <ToolbarItem
-        Command="{Binding RemoveDuplicateCommand}"
-        IconImageSource="add.png"
-        Order="Secondary"
-        Text="Remove" />
-        <ToolbarItem
-        Command="{Binding FromDatabaseCommand}"
-        IconImageSource="add.png"
-        Order="Secondary"
-        Text="From Db" />
-        <ToolbarItem
-        Command="{Binding TrueCallerUpdateCommand}"
-        IconImageSource="add.png"
-        Order="Primary"
-        Text="TC" />
-        <ToolbarItem
-        Command="{Binding ContactCleanerCommand}"
-        IconImageSource="add.png"
-        Order="Secondary"
-        Text="Clean" />
-        <ToolbarItem
-        Command="{Binding SaveToDataBaseCommand}"
-        IconImageSource="add.png"
-        Order="Secondary"
-        Text="Save" />-->
+            Command="{Binding SearchInTrueCallerCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Search In Truecaller" />
+
+        <!--
+        -->
     </ContentPage.ToolbarItems>
     <base:BasePage.Content>
 
@@ -171,17 +174,22 @@
             <ListView
                 x:Name="CListView3"
                 Grid.Row="2"
+                Header="Contacts"
                 IsVisible="false"
                 ItemsSource="{Binding VCards}"
+                RowHeight="60"
                 SeparatorColor="Blue">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
 
-                            <Grid Padding="-1">
+                            <Grid
+                                Padding="10"
+                                MinimumHeightRequest="60"
+                                RowSpacing="5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -202,8 +210,10 @@
                                 <Label
                                     x:Name="TextPhone"
                                     Grid.Row="0"
+                                    Grid.RowSpan="2"
                                     Grid.Column="1"
                                     Margin="25,2,2,2"
+                                    Padding="5"
                                     FontAttributes="Italic"
                                     HorizontalOptions="End"
                                     Text="{Binding Telephones[0].Number}"

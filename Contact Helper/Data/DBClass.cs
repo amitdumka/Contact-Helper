@@ -7,7 +7,7 @@ namespace Contact_Helper
 {
     public static class Constants
     {
-        public const string DatabaseFilename = "ContantCleanerWithContact.db3";
+        public const string DatabaseFilename = "ContantCleanerWithContact3.db3";
 
         public const SQLite.SQLiteOpenFlags Flags =
             // open the database in read/write mode
