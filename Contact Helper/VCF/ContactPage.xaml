@@ -67,6 +67,16 @@
 
         <!--
         -->
+        <ToolbarItem
+            Command="{Binding ReadFromDBToContactExCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="ContactEx DB" />
+        <ToolbarItem
+            Command="{Binding ReadFromDBToContactsCommand}"
+            IconImageSource="add.png"
+            Order="Secondary"
+            Text="Contacts DB" />
     </ContentPage.ToolbarItems>
     <base:BasePage.Content>
 

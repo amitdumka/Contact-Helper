@@ -101,6 +101,7 @@ namespace Contact_Helper.VCF
         {
             try
             {
+                if (ContactExts == null) ContactExts = new ObservableCollection<ContactExt>();
                 foreach (var cont in VCards)
                 {
                     var c = cont.ToContactExt();
@@ -122,6 +123,7 @@ namespace Contact_Helper.VCF
         {
             try
             {
+                if (Contacts == null) Contacts = new ObservableCollection<AksContact>();
                 foreach (var cont in ContactExts)
                 {
                     var c = cont.ToAKSContact();
@@ -143,6 +145,7 @@ namespace Contact_Helper.VCF
         {
             try
             {
+                if (Contacts == null) Contacts = new ObservableCollection<AksContact>();
                 foreach (var cont in ContactExts)
                 {
                     var c = cont.ToAKSContactClean();
@@ -165,13 +168,16 @@ namespace Contact_Helper.VCF
         {
             try
             {
-                if (Contacts == null && Contacts.Count <= 0)
+                if (Contacts == null || Contacts.Count <= 0)
                 {
                     var x = _db.Contacts.ToList();
+                    Contacts = new ObservableCollection<AksContact>();
                     foreach (var item in x)
                     {
                         Contacts.Add(item);
                     }
+                    _db.Contacts.RemoveRange(x.ToList());
+                    _db.SaveChanges();
                 }
 
                 List<AksContact> cleanC = new List<AksContact>();
@@ -195,9 +201,10 @@ namespace Contact_Helper.VCF
                             NameSuffix = cont.NameSuffix,
                             Phone = phone,
                             Status = "ERROR",
-                            TrueCallerName = "ERROR",
+                            TrueCallerName = "ERROR"
                         };
                         var aks = cont;
+                        aks.Id = 0;
                         aks.Telephone = phone;
                         aks.TrueCallerName = "ERROR";
                         cleanA.Add(ac);
@@ -205,17 +212,21 @@ namespace Contact_Helper.VCF
                     }
                 }
 
-                cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
-                cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
+                // cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
+                //cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
+               
+
                 _db.AContacts.AddRange(cleanA);
-                _db.Contacts.RemoveRange(Contacts.ToList());
+               
+                
+
                 _db.Contacts.AddRange(cleanC);
                 var count = await _db.SaveChangesAsync();
                 if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
             }
             catch (Exception ex)
             {
-                Notify.NotifyLong(ex.Message);
+                Notify.NotifyLong($"{ex.Message} {(ex.InnerException != null ? ex.InnerException.Message :ex.Message)}");
             }
         }
 
@@ -382,7 +393,7 @@ namespace Contact_Helper.VCF
 
                     BeginIndexInString = readContents.IndexOf("BEGIN:VCARD", EndIndexInString);
                     count++;
-                    // if (count > 200) return count;
+                    //if (count > 100) return count;
                 }
                 Notify.NotifyVLong($"Total Skipped Contact {skip} out of {count}");
                 return count;
@@ -429,6 +440,45 @@ namespace Contact_Helper.VCF
                 BeginIndexInString = readContents.IndexOf("BEGIN:VCARD", EndIndexInString);
             }
             return vCardList;
+        }
+
+        [RelayCommand]
+        private async Task ReadFromDBToContactEx()
+        {
+            if (ContactExts == null) ContactExts = new ObservableCollection<ContactExt>();
+            var cons = await _db.ContactExts.ToListAsync();
+            if (cons != null && cons.Any())
+                ContactExts.Clear();
+            foreach (var item in cons)
+            {
+                ContactExts.Add(item);
+            }
+            if (ContactListView2 != null)
+            {
+                ContactListView2.ItemsSource = ContactExts;
+                ContactListView2.IsVisible = true;
+                ContactListView.IsVisible = false;
+                ContactListView3.IsVisible = false;
+            }
+        }
+        [RelayCommand]
+        private async Task ReadFromDBToContacts()
+        {
+            if (Contacts == null) Contacts = new ObservableCollection<AksContact>();
+            var cons = await _db.Contacts.ToListAsync();
+            if (cons != null && cons.Any())
+                Contacts.Clear();
+            foreach (var item in cons)
+            {
+                Contacts.Add(item);
+            }
+            if (ContactListView2 != null)
+            {
+                ContactListView2.ItemsSource = Contacts;
+                ContactListView2.IsVisible = true;
+                ContactListView.IsVisible = false;
+                ContactListView3.IsVisible = false;
+            }
         }
 
         [RelayCommand]

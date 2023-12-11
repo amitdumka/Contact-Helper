@@ -46,7 +46,7 @@ namespace Contact_Helper
         {
             var x = new AksContact
             {
-                Address = ce.Addresse.Replace("#", ",\n"),
+                Address = ce.Addresse!=null?ce.Addresse.Replace("#", ",\n"):"",
                 AnniversaryDate = ce.Anniversary,
                 Birthdate = ce.BirthDay,
                 Email = ce.Email,
@@ -69,18 +69,21 @@ namespace Contact_Helper
                 Telephone = ce.Telephone
             };
 
-            var phones = x.Telephone.Split(';').ToList();
-            var clean = new List<string>();
-            foreach (var item in phones)
+            if (x.Telephone != null)
             {
-                clean.Add(CleanPhoneNumber(item));
+                var phones = x.Telephone.Split(';').ToList();
+                var clean = new List<string>();
+                foreach (var item in phones)
+                {
+                    clean.Add(CleanPhoneNumber(item));
+                }
+                clean = clean.Distinct().ToList();
+                foreach (var item in clean)
+                {
+                    x.Telephone += $"{item};";
+                }
+                x.Note += "#Cleaned";
             }
-            clean = clean.Distinct().ToList();
-            foreach (var item in clean)
-            {
-                x.Telephone += $"{item};";
-            }
-            x.Note += "#Cleaned";
             return x;
         }
 
@@ -88,7 +91,7 @@ namespace Contact_Helper
         {
             return new AksContact
             {
-                Address = ce.Addresse.Replace("#", ",\n"),
+                Address =ce.Addresse!=null? ce.Addresse.Replace("#", ",\n"):"",
                 AnniversaryDate = ce.Anniversary,
                 Birthdate = ce.BirthDay,
                 Email = ce.Email,
@@ -96,9 +99,9 @@ namespace Contact_Helper
                 LastName = ce.LastName,
                 MiddleName = ce.MiddleName,
                 Id = ce.Id,
-                IsEmmbeded = ce.IsEmbeddedPhoto,
-                Latitude = ce.Latitude,
-                Longitude = ce.Longitude,
+                IsEmmbeded = ce.IsEmbeddedPhoto.Value,
+                Latitude = ce.Latitude.Value,
+                Longitude = ce.Longitude.Value,
                 NamePrefix = ce.Prefix,
                 Organization = ce.Organization,
                 OrganizationalUnit = ce.OrganizationalUnit,
@@ -135,24 +138,27 @@ namespace Contact_Helper
                 NamePrefix = card.Prefix,
 
                 TrueCallerName = "",
-                PhotoContent = card.Photo.Contents,
-                PhotoExt = card.Photo.Extension,
-                IsEmmbeded = card.Photo.IsEmbedded,
+                PhotoContent = card.Photo != null ? card.Photo.Contents : "",
+                PhotoExt = card.Photo != null ? card.Photo.Extension : "",
+                IsEmmbeded = card.Photo != null ? card.Photo.IsEmbedded : false,
 
                 Id = 0,
             };
-            foreach (var item in card.Addresses)
-            {
-                ceExt.Address += $"{item.Label},\n{item.ExtendedAddress},\n{item.PoBox},\n{item.Street},\n{item.PostalCode},\n{item.Locality},\n{item.Region},\n{item.Country},\n\n" + ";";
-            }
-            foreach (var item in card.Telephones)
-            {
-                ceExt.Telephone += item + ";";
-            }
-            foreach (var item in card.Emails)
-            {
-                ceExt.Email += item + ";";
-            }
+            if (card.Addresses != null)
+                foreach (var item in card.Addresses)
+                {
+                    ceExt.Address += $"{item.Label},\n{item.ExtendedAddress},\n{item.PoBox},\n{item.Street},\n{item.PostalCode},\n{item.Locality},\n{item.Region},\n{item.Country},\n\n" + ";";
+                }
+            if (card.Telephones != null)
+                foreach (var item in card.Telephones)
+                {
+                    ceExt.Telephone += item.Number + ";";
+                }
+            if (card.Emails != null)
+                foreach (var item in card.Emails)
+                {
+                    ceExt.Email += item.EmailAddress + ";";
+                }
             return ceExt;
         }
 
@@ -162,7 +168,7 @@ namespace Contact_Helper
             {
                 Anniversary = card.Anniversary,
                 BirthDay = card.BirthDay,
-                Categories = card.Categories.ToString(),
+                Categories = card.Categories != null ? card.Categories.ToString() : "",
                 FirstName = card.FirstName,
                 LastName = card.LastName,
                 FormattedName = card.FormattedName,
@@ -185,34 +191,38 @@ namespace Contact_Helper
                 Role = card.Role,
                 Sound = card.Sound,
                 TrueCallerName = "",
-                SourceUri = card.Source.OriginalString,
-                UrlUri = card.Url.OriginalString,
-                ContentsLogo = card.Logo.Contents,
-                ContentsPhoto = card.Photo.Contents,
-                ExtensionLogo = card.Logo.Extension,
-                IsEmbeddedLogo = card.Logo.IsEmbedded,
-                ExtensionPhoto = card.Photo.Extension,
-                IsEmbeddedPhoto = card.Photo.IsEmbedded,
+                SourceUri = card.Source != null ? card.Source.OriginalString : "",
+                UrlUri = card.Url != null ? card.Url.OriginalString : "",
+                ContentsLogo = card.Logo != null ? card.Logo.Contents : "",
+                ContentsPhoto = card.Photo != null ? card.Photo.Contents : "",
+                ExtensionLogo = card.Logo != null ? card.Logo.Extension : "",
+                IsEmbeddedLogo = card.Logo != null ? card.Logo.IsEmbedded : false,
+                ExtensionPhoto = card.Photo != null ? card.Photo.Extension : "",
+                IsEmbeddedPhoto = card.Photo != null ? card.Photo.IsEmbedded : false,
                 Id = 0,
                 SortString = card.SortString,
-                DeliveryAddress = card.DeliveryAddress.Address.Trim(),
+                DeliveryAddress = card.DeliveryAddress != null ? card.DeliveryAddress.Address.Trim() : "",
             };
-            foreach (var item in card.Relations)
-            {
-                ceExt.Relations += item.RelationUri.OriginalString + "#" + item.Type.ToString() + "#" + item.Preference.ToString() + ";";
-            }
-            foreach (var item in card.Addresses)
-            {
-                ceExt.Addresse += $"{item.Label}#{item.ExtendedAddress}#{item.PoBox}#{item.Street}#{item.PostalCode}#{item.Locality}#{item.Region}#{item.Country}" + ";";
-            }
-            foreach (var item in card.Telephones)
-            {
-                ceExt.Telephone += item + ";";
-            }
-            foreach (var item in card.Emails)
-            {
-                ceExt.Email += item + ";";
-            }
+            if (card.Relations != null)
+                foreach (var item in card.Relations)
+                {
+                    ceExt.Relations += item.RelationUri.OriginalString + "#" + item.Type.ToString() + "#" + item.Preference.ToString() + ";";
+                }
+            if (card.Addresses != null)
+                foreach (var item in card.Addresses)
+                {
+                    ceExt.Addresse += $"{item.Label}#{item.ExtendedAddress}#{item.PoBox}#{item.Street}#{item.PostalCode}#{item.Locality}#{item.Region}#{item.Country}" + ";";
+                }
+            if (card.Telephones != null)
+                foreach (var item in card.Telephones)
+                {
+                    ceExt.Telephone += item.Number + ";";
+                }
+            if (card.Emails != null)
+                foreach (var item in card.Emails)
+                {
+                    ceExt.Email += item.EmailAddress + ";";
+                }
             return ceExt;
         }
 
@@ -228,15 +238,15 @@ namespace Contact_Helper
                 FormattedName = ce.FormattedName,
                 DeliveryAddress = new MixERP.Net.VCards.Types.DeliveryAddress { Address = ce.DeliveryAddress },
                 Key = ce.Key,
-                Kind = ce.Kind,
+                Kind = ce.Kind.Value,
                 LastRevision = ce.LastRevision,
-                Logo = new MixERP.Net.VCards.Models.Photo(ce.IsEmbeddedLogo, ce.ExtensionLogo, ce.ContentsLogo),
-                Photo = new MixERP.Net.VCards.Models.Photo(ce.IsEmbeddedPhoto, ce.ExtensionPhoto, ce.ContentsPhoto),
-                Latitude = ce.Latitude,
+                Logo = new MixERP.Net.VCards.Models.Photo(ce.IsEmbeddedLogo.Value, ce.ExtensionLogo, ce.ContentsLogo),
+                Photo = new MixERP.Net.VCards.Models.Photo(ce.IsEmbeddedPhoto.Value, ce.ExtensionPhoto, ce.ContentsPhoto),
+                Latitude = ce.Latitude.Value,
                 SortString = ce.SortString,
                 Role = ce.Role,
                 OrganizationalUnit = ce.OrganizationalUnit,
-                Longitude = ce.Longitude,
+                Longitude = ce.Longitude.Value,
                 Sound = ce.Sound,
                 Organization = ce.Organization,
                 Note = ce.Note,
