@@ -9,25 +9,25 @@ using VCard = MixERP.Net.VCards.VCard;
 
 namespace Contact_Helper.VCF
 {
-
-
     internal partial class VcfHelper : BaseViewModel
     {
         /// <summary>
         /// ContactList  using Contact Model from MAUI API
         /// </summary>
         [ObservableProperty]
-        ListView _contactListView;
+        private ListView _contactListView;
+
         /// <summary>
         /// Contacts and ContactExt Model of Custom contact model
         /// </summary>
         [ObservableProperty]
-        ListView _contactListView2;
+        private ListView _contactListView2;
+
         /// <summary>
         /// VCards  using VCard model from VCF extension
         /// </summary>
         [ObservableProperty]
-        ListView _contactListView3;
+        private ListView _contactListView3;
 
         [ObservableProperty]
         private ObservableCollection<VCard> _vCards;
@@ -37,11 +37,12 @@ namespace Contact_Helper.VCF
 
         [ObservableProperty]
         private ObservableCollection<ContactExt> _contactExts;
+
         [ObservableProperty]
         private string _fileName;
 
         [ObservableProperty]
-        Contact selectedContact;
+        private Contact selectedContact;
 
         [ObservableProperty]
         public ObservableCollection<Contact> contactsList;
@@ -51,6 +52,7 @@ namespace Contact_Helper.VCF
             //_db=appContext;
             // OnGetAllContact();
         }
+
         public void SetDB(AppContext appContext)
         {
             _db = appContext;
@@ -99,8 +101,6 @@ namespace Contact_Helper.VCF
         {
             try
             {
-
-
                 foreach (var cont in VCards)
                 {
                     var c = cont.ToContactExt();
@@ -113,17 +113,15 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
+
         [RelayCommand]
         private async Task ToContacts()
         {
             try
             {
-
-
                 foreach (var cont in ContactExts)
                 {
                     var c = cont.ToAKSContact();
@@ -136,10 +134,10 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
+
         [RelayCommand]
         private async Task ToContactCleaned()
         {
@@ -158,82 +156,78 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
+
         [RelayCommand]
-        async Task BreakContacts()
+        private async Task BreakContacts()
         {
-            try { 
-            if (Contacts == null && Contacts.Count <= 0)
+            try
             {
-                var x = _db.Contacts.ToList();
-                foreach (var item in x)
+                if (Contacts == null && Contacts.Count <= 0)
                 {
-                    Contacts.Add(item);
-                }
-
-
-            }
-
-            List<AksContact> cleanC = new List<AksContact>();
-            List<AContact> cleanA = new List<AContact>();
-
-            foreach (var cont in Contacts)
-            {
-                var phones = cont.Telephone.Split(';');
-
-                foreach (var ph in phones)
-                {
-                    var phone = CleanPhoneNumber(ph);
-
-                    AContact ac = new AContact
+                    var x = _db.Contacts.ToList();
+                    foreach (var item in x)
                     {
-                        Email = cont.Email,
-                        GivenName = cont.FirstName,
-                        FamilyName = cont.LastName,
-                        MiddleName = cont.MiddleName,
-                        NamePrefix = cont.NamePrefix,
-                        NameSuffix = cont.NameSuffix,
-                        Phone = phone,
-                        Status = "ERROR",
-                        TrueCallerName = "ERROR",
-                    };
-                    var aks = cont;
-                    aks.Telephone = phone;
-                    aks.TrueCallerName = "ERROR";
-                    cleanA.Add(ac);
-                    cleanC.Add(aks);
+                        Contacts.Add(item);
+                    }
                 }
-            }
 
-            cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
-            cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
-            _db.AContacts.AddRange(cleanA);
-            _db.Contacts.RemoveRange(Contacts.ToList());
-            _db.Contacts.AddRange(cleanC);
-            var count = await _db.SaveChangesAsync();
-            if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
+                List<AksContact> cleanC = new List<AksContact>();
+                List<AContact> cleanA = new List<AContact>();
+
+                foreach (var cont in Contacts)
+                {
+                    var phones = cont.Telephone.Split(';');
+
+                    foreach (var ph in phones)
+                    {
+                        var phone = CleanPhoneNumber(ph);
+
+                        AContact ac = new AContact
+                        {
+                            Email = cont.Email,
+                            GivenName = cont.FirstName,
+                            FamilyName = cont.LastName,
+                            MiddleName = cont.MiddleName,
+                            NamePrefix = cont.NamePrefix,
+                            NameSuffix = cont.NameSuffix,
+                            Phone = phone,
+                            Status = "ERROR",
+                            TrueCallerName = "ERROR",
+                        };
+                        var aks = cont;
+                        aks.Telephone = phone;
+                        aks.TrueCallerName = "ERROR";
+                        cleanA.Add(ac);
+                        cleanC.Add(aks);
+                    }
+                }
+
+                cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
+                cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
+                _db.AContacts.AddRange(cleanA);
+                _db.Contacts.RemoveRange(Contacts.ToList());
+                _db.Contacts.AddRange(cleanC);
+                var count = await _db.SaveChangesAsync();
+                if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
+
         [RelayCommand]
         private async Task ReadVCFFile()
         {
             try
             {
-
-
                 //if (!string.IsNullOrEmpty(filePath)) this.FileName = filePath;
                 PickOptions options = new()
                 {
                     PickerTitle = "Please select a VCF file",
-
                 };
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result != null)
@@ -279,21 +273,18 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
+
         [RelayCommand]
         private async Task ReadVCFFileToContactExt()
         {
             try
             {
-
-
                 PickOptions options = new()
                 {
                     PickerTitle = "Please select a excel file",
-
                 };
                 var result = await FilePicker.Default.PickAsync(options);
                 if (result != null)
@@ -340,7 +331,6 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
@@ -370,7 +360,6 @@ namespace Contact_Helper.VCF
                     int EndIndexInString = readContents.IndexOf("END:VCARD", BeginIndexInString);
                     string OneVcf = readContents.Substring(BeginIndexInString, EndIndexInString - BeginIndexInString);
 
-
                     try
                     {
                         VCard vcards = (VCard)MixERP.Net.VCards.Deserializer.GetVCard(OneVcf);
@@ -382,7 +371,6 @@ namespace Contact_Helper.VCF
                            if (toContactExt)
                                ContactExts.Add(((VCard)vcards).ToContactExt());
                        });
-
                     }
                     catch (Exception ex)
                     {
@@ -401,10 +389,8 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 return -1;
             }
-
         }
 
         private List<VCard> ReadVCFFileToVCards(string fileName)
@@ -422,7 +408,6 @@ namespace Contact_Helper.VCF
                 var vcards = (VCard)MixERP.Net.VCards.Deserializer.GetVCard(OneVcf);
                 vCardList.Add((VCard)vcards);
                 BeginIndexInString = readContents.IndexOf("BEGIN:VCARD", EndIndexInString);
-
             }
             return vCardList;
         }
@@ -442,7 +427,6 @@ namespace Contact_Helper.VCF
                 var vcards = (VCard)MixERP.Net.VCards.Deserializer.GetVCard(OneVcf);
                 vCardList.Add(((VCard)vcards).ToContactExt());
                 BeginIndexInString = readContents.IndexOf("BEGIN:VCARD", EndIndexInString);
-
             }
             return vCardList;
         }
@@ -452,10 +436,8 @@ namespace Contact_Helper.VCF
         {
             try
             {
-
-
                 var x = await _db.Contacts.Where(c => c.TrueCallerName == "ERROR").ToListAsync();
-                if (x != null && x.Count>0)
+                if (x != null && x.Count > 0)
                 {
                     foreach (var contact in x)
                     {
@@ -470,7 +452,6 @@ namespace Contact_Helper.VCF
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
@@ -480,14 +461,12 @@ namespace Contact_Helper.VCF
         {
             try
             {
-
                 var x = _db.AContacts.Where(c => c.Status.Contains("ERROR")).Take(50).ToList();
                 int count = 0, Saved = 0;
                 if (x != null)
                 {
                     foreach (var contact in x)
                     {
-
                         var searchData = await APIServer.SearchNumberByName(contact.Phone, true, false, true);
                         if (searchData != null && searchData.Status.ToLower().Contains("error") == false)
                         {
@@ -504,24 +483,20 @@ namespace Contact_Helper.VCF
                                 if (count > 10) break;
                             }
                         }
-
                     }
                     var c = await _db.SaveChangesAsync() > 0;
                     if (c) Notify.NotifyVShort($"Searched {Saved} contacts");
                     else Notify.NotifyVShort($"Not able to searched contacts");
                 }
-
             }
             catch (Exception ex)
             {
-
                 Notify.NotifyLong(ex.Message);
             }
         }
 
-
         [RelayCommand]
-        async Task OnGetAllContact()
+        private async Task OnGetAllContact()
         {
             //if (await Permissions.RequestAsync<Permissions.ContactsRead>() != PermissionStatus.Granted)
             //  return;
@@ -534,9 +509,7 @@ namespace Contact_Helper.VCF
                 ContactsList.Clear();
             try
             {
-
                 var contacts = await ContactsManager.GetAllAsync();
-
 
                 await Task.Run(
                     () =>
@@ -567,7 +540,6 @@ namespace Contact_Helper.VCF
 }
 
 //private void SliptVcard1() {
-
 //    DialogResult result = folderBrowserDialog1.ShowDialog();
 //    if (result == DialogResult.OK)
 //    {
@@ -589,10 +561,8 @@ namespace Contact_Helper.VCF
 //        }
 //        MessageBox.Show("Done!");
 
-
 //    }
 //private void SliptVcard2() {
-
 //    String source = this.tbSource.Text;
 //    String target = this.tbTarget.Text;
 

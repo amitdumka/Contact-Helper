@@ -44,7 +44,7 @@ namespace Contact_Helper
 
         public static AksContact ToAKSContactClean(this ContactExt ce)
         {
-            var x= new AksContact
+            var x = new AksContact
             {
                 Address = ce.Addresse.Replace("#", ",\n"),
                 AnniversaryDate = ce.Anniversary,
@@ -70,13 +70,12 @@ namespace Contact_Helper
             };
 
             var phones = x.Telephone.Split(';').ToList();
-            var clean= new List<string>();
+            var clean = new List<string>();
             foreach (var item in phones)
             {
                 clean.Add(CleanPhoneNumber(item));
-                
             }
-            clean=clean.Distinct().ToList();
+            clean = clean.Distinct().ToList();
             foreach (var item in clean)
             {
                 x.Telephone += $"{item};";

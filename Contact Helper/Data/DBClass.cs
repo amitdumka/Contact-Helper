@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MixERP.Net.VCards.Models;
-using MixERP.Net.VCards.Types;
+﻿using MixERP.Net.VCards.Types;
 using SQLite;
 
 namespace Contact_Helper
@@ -19,6 +17,7 @@ namespace Contact_Helper
 
         public static string DatabasePath =>
             Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
+
         public static string DbString = $"Filename={DatabasePath}";
     }
 
@@ -41,8 +40,10 @@ namespace Contact_Helper
         public string? Email { get; set; }
         public string? FamilyName { get; set; }
         public string? GivenName { get; set; }
+
         [SQLite.PrimaryKey]
         public int Id { get; set; }
+
         public string IDS { get; set; }
         public string? MiddleName { get; set; }
         public string? NamePrefix { get; set; }
@@ -61,7 +62,8 @@ namespace Contact_Helper
         public string MiddleName { get; set; }
         public string NamePrefix { get; set; }
         public string NameSuffix { get; set; }
-        public string FormattedName { get { return $"{Title}. {FirstName} {LastName}"; } }
+        public string FormattedName
+        { get { return $"{Title}. {FirstName} {LastName}"; } }
         public string TrueCallerName { get; set; }
         public string Telephone { get; set; }
         public string Email { get; set; }
@@ -76,11 +78,7 @@ namespace Contact_Helper
         public string Organization { get; set; }
         public string OrganizationalUnit { get; set; }
         public string Address { get; set; }
-
     }
-
-
-
 
     public class ContactExt
     {
@@ -127,7 +125,6 @@ namespace Contact_Helper
 
         public string ExtensionLogo { get; set; }
 
-
         public double Longitude { get; set; }
 
         public string Mailer { get; set; }
@@ -137,7 +134,6 @@ namespace Contact_Helper
         public string NickName { get; set; }
 
         public string Note { get; set; }
-
 
         public string Organization { get; set; }
 
@@ -170,47 +166,17 @@ namespace Contact_Helper
         public string UniqueIdentifier { get; set; }
 
         public string UrlUri { get; set; }
-
     }
-
-    public class AppContext : DbContext
-    {
-        public AppContext()
-        {
-            SQLitePCL.Batteries_V2.Init();
-            Database.EnsureCreated();
-            Database.Migrate();
-
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //string dbPath = Path.Combine(FileSystem.AppDataDirectory, "medbaseapplica.db3");
-            optionsBuilder.UseSqlite(Constants.DbString);
-        }
-
-        public DbSet<AContact> AContacts { get; set; }
-        public DbSet<ContactExt> ContactExts { get; set; }
-        public DbSet<AksContact> Contacts { get; set; }
-
-    }
-
 
     public class DBClass
     {
-        SQLiteAsyncConnection Database;
-
-
-
+        private SQLiteAsyncConnection Database;
 
         public DBClass()
         {
-
         }
 
-
-
-        async Task Init()
+        private async Task Init()
         {
             if (Database is not null)
                 return;
@@ -232,20 +198,17 @@ namespace Contact_Helper
             return await Database.DeleteAsync(item);
         }
 
-
         public async Task<AContact> GetContactAsync(string phonenumber)
         {
             await Init();
             return await Database.Table<AContact>().Where(i => i.Phone == phonenumber).FirstOrDefaultAsync();
         }
 
-
         public async Task<List<AContact>> GetContactsAsync()
         {
             await Init();
             return await Database.Table<AContact>().ToListAsync();
         }
-
 
         public async Task<ContactModel> GetItemAsync(string phonenumber)
         {
@@ -276,6 +239,7 @@ namespace Contact_Helper
             else
                 return await Database.InsertAsync(item);
         }
+
         public async Task<int> UpdateContactAsync(AContact item)
         {
             await Init();
@@ -285,44 +249,5 @@ namespace Contact_Helper
             // else
             //return await Database.InsertAsync(item);
         }
-    }
-
-
-    public abstract class DataModel<T>
-    {
-        private AppContext db;
-
-        public async Task<bool> DeleteAllAsync(List<T> entities)
-        {
-            db.RemoveRange(entities);
-            return (await db.SaveChangesAsync()) > 0;
-        }
-
-        public async Task<bool> DeleteAsync(T entity)
-        {
-
-            db.Remove(entity);
-            return (await db.SaveChangesAsync()) > 0;
-        }
-
-        //public T GetById(int id) { return db.Set<T>.Find(id); }
-        //public T GetById(string id) { return db.Set<T>().Find(id); }
-
-        public async Task<T> SaveOrUpdateAsync(T entity, bool isNew = true)
-        {
-            if (entity == null) return default(T);
-            if (isNew) db.AddAsync(entity);
-            else db.Update(entity);
-            if ((await db.SaveChangesAsync()) > 0)
-            {
-                return entity;
-            }
-            else return default(T);
-        }
-
-        public List<T> Entities { get; set; }
-
-        public T Entity { get; set; }
-
     }
 }
