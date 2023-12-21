@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-
-namespace Contact_Helper
+﻿namespace Contact_Helper
 {
 
     public class SearchByName

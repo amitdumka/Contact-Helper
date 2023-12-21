@@ -99,17 +99,19 @@ namespace Contact_Helper.VCF
         {
             try
             {
-
-
-                foreach (var cont in VCards)
+                if (VCards != null && VCards.Count > 0)
                 {
-                    var c = cont.ToContactExt();
-                    ContactExts.Add(c);
-                    _db.ContactExts.Add(c);
-                }
+                    if (ContactExts == null) ContactExts = new ObservableCollection<ContactExt>();
+                    foreach (var cont in VCards)
+                    {
+                        var c = cont.ToContactExt();
+                        ContactExts.Add(c);
+                        _db.ContactExts.Add(c);
+                    }
 
-                bool flag = await _db.SaveChangesAsync() > 0;
-                if (flag) Notify.NotifyLong("Added and Saved contact ext"); else Notify.NotifyLong("Fail to add and Save contact ext");
+                    bool flag = await _db.SaveChangesAsync() > 0;
+                    if (flag) Notify.NotifyLong("Added and Saved contact ext"); else Notify.NotifyLong("Fail to add and Save contact ext");
+                }
             }
             catch (Exception ex)
             {
@@ -122,17 +124,20 @@ namespace Contact_Helper.VCF
         {
             try
             {
-
-
-                foreach (var cont in ContactExts)
+                if (ContactExts != null && ContactExts.Count > 0)
                 {
-                    var c = cont.ToAKSContact();
-                    Contacts.Add(c);
-                    _db.Contacts.Add(c);
-                }
+                    if (Contacts == null) Contacts = new ObservableCollection<AksContact>();
 
-                bool flag = await _db.SaveChangesAsync() > 0;
-                if (flag) Notify.NotifyLong("Added and Saved contacts"); else Notify.NotifyLong("Fail to add and Save contacts");
+                    foreach (var cont in ContactExts)
+                    {
+                        var c = cont.ToAKSContact();
+                        Contacts.Add(c);
+                        _db.Contacts.Add(c);
+                    }
+
+                    bool flag = await _db.SaveChangesAsync() > 0;
+                    if (flag) Notify.NotifyLong("Added and Saved contacts"); else Notify.NotifyLong("Fail to add and Save contacts");
+                }
             }
             catch (Exception ex)
             {
@@ -145,16 +150,20 @@ namespace Contact_Helper.VCF
         {
             try
             {
-                foreach (var cont in ContactExts)
+                if (ContactExts != null && ContactExts.Count > 0)
                 {
-                    var c = cont.ToAKSContactClean();
-                    Contacts.Add(c);
-                    c.Id = 0;
-                    _db.Contacts.Add(c);
-                }
+                    if (Contacts == null) Contacts = new ObservableCollection<AksContact>();
+                    foreach (var cont in ContactExts)
+                    {
+                        var c = cont.ToAKSContactClean();
+                        Contacts.Add(c);
+                        c.Id = 0;
+                        _db.Contacts.Add(c);
+                    }
 
-                bool flag = await _db.SaveChangesAsync() > 0;
-                if (flag) Notify.NotifyLong("Added and Saved contacts which is cleaned"); else Notify.NotifyLong("Fail to add and Save contacts Cleaned");
+                    bool flag = await _db.SaveChangesAsync() > 0;
+                    if (flag) Notify.NotifyLong("Added and Saved contacts which is cleaned"); else Notify.NotifyLong("Fail to add and Save contacts Cleaned");
+                }
             }
             catch (Exception ex)
             {
@@ -165,56 +174,57 @@ namespace Contact_Helper.VCF
         [RelayCommand]
         async Task BreakContacts()
         {
-            try { 
-            if (Contacts == null && Contacts.Count <= 0)
+            try
             {
-                var x = _db.Contacts.ToList();
-                foreach (var item in x)
+                if (Contacts == null && Contacts.Count <= 0)
                 {
-                    Contacts.Add(item);
-                }
-
-
-            }
-
-            List<AksContact> cleanC = new List<AksContact>();
-            List<AContact> cleanA = new List<AContact>();
-
-            foreach (var cont in Contacts)
-            {
-                var phones = cont.Telephone.Split(';');
-
-                foreach (var ph in phones)
-                {
-                    var phone = CleanPhoneNumber(ph);
-
-                    AContact ac = new AContact
+                    var x = _db.Contacts.ToList();
+                    foreach (var item in x)
                     {
-                        Email = cont.Email,
-                        GivenName = cont.FirstName,
-                        FamilyName = cont.LastName,
-                        MiddleName = cont.MiddleName,
-                        NamePrefix = cont.NamePrefix,
-                        NameSuffix = cont.NameSuffix,
-                        Phone = phone,
-                        Status = "ERROR",
-                        TrueCallerName = "ERROR",
-                    };
-                    var aks = cont;
-                    aks.Telephone = phone;
-                    aks.TrueCallerName = "ERROR";
-                    cleanA.Add(ac);
-                    cleanC.Add(aks);
-                }
-            }
+                        Contacts.Add(item);
+                    }
 
-            cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
-            cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
-            _db.AContacts.AddRange(cleanA);
-            _db.Contacts.RemoveRange(Contacts.ToList());
-            _db.Contacts.AddRange(cleanC);
-            var count = await _db.SaveChangesAsync();
-            if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
+
+                }
+
+                List<AksContact> cleanC = new List<AksContact>();
+                List<AContact> cleanA = new List<AContact>();
+
+                foreach (var cont in Contacts)
+                {
+                    var phones = cont.Telephone.Split(';');
+
+                    foreach (var ph in phones)
+                    {
+                        var phone = CleanPhoneNumber(ph);
+
+                        AContact ac = new AContact
+                        {
+                            Email = cont.Email,
+                            GivenName = cont.FirstName,
+                            FamilyName = cont.LastName,
+                            MiddleName = cont.MiddleName,
+                            NamePrefix = cont.NamePrefix,
+                            NameSuffix = cont.NameSuffix,
+                            Phone = phone,
+                            Status = "ERROR",
+                            TrueCallerName = "ERROR",
+                        };
+                        var aks = cont;
+                        aks.Telephone = phone;
+                        aks.TrueCallerName = "ERROR";
+                        cleanA.Add(ac);
+                        cleanC.Add(aks);
+                    }
+                }
+
+                cleanC = cleanC.DistinctBy(c => c.Telephone).ToList();
+                cleanA = cleanA.DistinctBy(c => c.Phone).ToList();
+                _db.AContacts.AddRange(cleanA);
+                _db.Contacts.RemoveRange(Contacts.ToList());
+                _db.Contacts.AddRange(cleanC);
+                var count = await _db.SaveChangesAsync();
+                if (count > 0) Notify.NotifyVLong("Saved"); else Notify.NotifyVShort("Error");
             }
             catch (Exception ex)
             {
@@ -455,7 +465,7 @@ namespace Contact_Helper.VCF
 
 
                 var x = await _db.Contacts.Where(c => c.TrueCallerName == "ERROR").ToListAsync();
-                if (x != null && x.Count>0)
+                if (x != null && x.Count > 0)
                 {
                     foreach (var contact in x)
                     {
